@@ -18,13 +18,13 @@ This plugin is multisite compatible, with options set on a per site basis.
 **azurecurve** was one of the first plugin developers to start developing for Classicpress; all plugins are available from [azurecurve Development](https://development.azurecurve.co.uk/) and are integrated with the [Update Manager plugin](https://codepotent.com/classicpress/plugins/update-manager/) for fully integrated, no hassle, updates.
 
 Some of the other plugins available from **azurecurve** are:
-* [Add Open Graph Tags](https://development.azurecurve.co.uk/classicpress-plugins/add-open-graph-tags/)
-* [Add Twitter Cards](https://development.azurecurve.co.uk/classicpress-plugins/add-twitter-cards/)
-* [Disable FLoC](https://development.azurecurve.co.uk/classicpress-plugins/disable-floc/)
-* [Series Index](https://development.azurecurve.co.uk/classicpress-plugins/series-index/)
-* [SMTP](https://development.azurecurve.co.uk/classicpress-plugins/smtp/)
-* [To Twitter](https://development.azurecurve.co.uk/classicpress-plugins/to-twitter/)
-* [Theme Switcher](https://development.azurecurve.co.uk/classicpress-plugins/theme-switcher/)
-* [Toggle Show/Hide](https://development.azurecurve.co.uk/classicpress-plugins/toggle-showhide/)
-* [Update Admin Menu](https://development.azurecurve.co.uk/classicpress-plugins/update-admin-menu/)
-* [URL Shortener](https://development.azurecurve.co.uk/classicpress-plugins/url-shortener/)
+ * Add Open Graph Tags - [details](https://development.azurecurve.co.uk/classicpress-plugins/add-open-graph-tags/) / [download](https://github.com/azurecurve/azrcrv-add-open-graph-tags/releases/latest/)
+ * Add Twitter Cards - [details](https://development.azurecurve.co.uk/classicpress-plugins/add-twitter-cards/) / [download](https://github.com/azurecurve/azrcrv-add-twitter-cards/releases/latest/)
+ * Disable FLoC - [details](https://development.azurecurve.co.uk/classicpress-plugins/disaable-floc/) / [download](https://github.com/azurecurve/azrcrv-disaable-floc/releases/latest/)
+ * Series Index - [details](https://development.azurecurve.co.uk/classicpress-plugins/series-index/) / [download](https://github.com/azurecurve/azrcrv-series-index/releases/latest/)
+ * SMTP - [details](https://development.azurecurve.co.uk/classicpress-plugins/smtp/) / [download](https://github.com/azurecurve/azrcrv-smtp/releases/latest/)
+ * Theme Switcher - [details](https://development.azurecurve.co.uk/classicpress-plugins/theme-switcher/) / [download](https://github.com/azurecurve/azrcrv-theme-switcher/releases/latest/)
+ * To Twitter - [details](https://development.azurecurve.co.uk/classicpress-plugins/to-twitter/) / [download](https://github.com/azurecurve/azrcrv-to-twitter/releases/latest/)
+ * Toggle Show/Hide - [details](https://development.azurecurve.co.uk/classicpress-plugins/toggle-showhide/) / [download](https://github.com/azurecurve/azrcrv-toggle-showhide/releases/latest/)
+ * Update Admin Menu - [details](https://development.azurecurve.co.uk/classicpress-plugins/update-admin-menu/) / [download](https://github.com/azurecurve/azrcrv-update-admin-menu/releases/latest/)
+ * URL Shortener - [details](https://development.azurecurve.co.uk/classicpress-plugins/url-shortener/) / [download](https://github.com/azurecurve/azrcrv-url-shortener/releases/latest/)

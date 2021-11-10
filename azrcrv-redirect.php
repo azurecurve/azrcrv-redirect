@@ -977,9 +977,9 @@ function add_redirect() {
 
 		if ( isset( $_POST['btn_add'] ) ) {
 
-			$before        = wp_parse_url( sanitize_text_field( $_POST['source-url'] ), PHP_URL_PATH );
+			$before        = trailingslashit( wp_parse_url( sanitize_text_field( $_POST['source-url'] ), PHP_URL_PATH ) );
 			$redirect_type = (int) $_POST['redirect-type'];
-			$after         = wp_parse_url( sanitize_text_field( $_POST['destination-url'] ), PHP_URL_PATH );
+			$after         = trailingslashit( wp_parse_url( sanitize_text_field( $_POST['destination-url'] ), PHP_URL_PATH ) );
 
 			if ( $id == 0 ) {
 				$redirect = check_for_redirect( $before );
@@ -1042,8 +1042,12 @@ function redirect_incoming() {
 			$sql       = $wpdb->prepare( "UPDATE $tablename SET redirect_count = redirect_count + 1, last_redirect = NOW(), last_redirect_utc = UTC_TIMESTAMP() WHERE ID = '%d'", $redirect->id );
 
 			$wpdb->query( $sql );
+			
+			if ( strlen( $query_string ) > 0 ){
+				$query_string = '?' . $query_string;
+			}
 
-			wp_redirect( $redirect->destination_url . '?' . $query_string, $redirect->redirect_type );
+			wp_redirect( $redirect->destination_url . $query_string, $redirect->redirect_type );
 			exit;
 
 		}
@@ -1097,10 +1101,10 @@ function add_redirect_for_changed_permalink( $post_id, $post_after, $post_before
 
 	if ( $options['redirect-permalink-changes'] == 1 ) {
 
-		$before = wp_parse_url( get_transient( 'azrcrv-r-' . $post_id ), PHP_URL_PATH );
-		$after  = wp_parse_url( get_permalink( $post_id ), PHP_URL_PATH );
+		$before = trailingslashit( wp_parse_url( get_transient( 'azrcrv-r-' . $post_id ), PHP_URL_PATH ) );
+		$after  = trailingslashit( wp_parse_url( get_permalink( $post_id ), PHP_URL_PATH ) );
 
-		if ( $before != $after ) {
+		if ( $before != $after and $before != '/' ) {
 
 			$tablename = $wpdb->prefix . DATABASE_TABLE;
 

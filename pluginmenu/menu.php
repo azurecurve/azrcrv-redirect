@@ -361,7 +361,7 @@ if (!function_exists('azrcrv_populate_plugin_menu_r')){
 				'admin_URL' => 'admin.php?page=azrcrv-r',
 				'dev_URL' => 'https://development.azurecurve.co.uk/classicpress-plugins/redirect/',
 				'retired' => 0,
-				'updated' => '2021-09-14',
+				'updated' => '2021-11-10',
 			),
 			'Remove Revisions' => array(
 				'plugin_link' => 'azrcrv-remove-revisions/azrcrv-remove-revisions.php',
