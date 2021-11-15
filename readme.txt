@@ -66,8 +66,7 @@ This plugin is developed for ClassicPress, but will likely work on WordPress.
 
 **azurecurve** was one of the first plugin developers to start developing for Classicpress; all plugins are available from [azurecurve Development](https://development.azurecurve.co.uk/) and are integrated with the [Update Manager plugin](https://codepotent.com/classicpress/plugins/update-manager/) for fully integrated, no hassle, updates.
 
-Some of the top plugins available from **azurecurve** are:
- * Add Open Graph Tags - [details](https://development.azurecurve.co.uk/classicpress-plugins/add-open-graph-tags/) / [download](https://github.com/azurecurve/azrcrv-add-open-graph-tags/releases/latest/)
+Some of the other plugins available from **azurecurve** are: * Add Open Graph Tags - [details](https://development.azurecurve.co.uk/classicpress-plugins/add-open-graph-tags/) / [download](https://github.com/azurecurve/azrcrv-add-open-graph-tags/releases/latest/)
  * Add Twitter Cards - [details](https://development.azurecurve.co.uk/classicpress-plugins/add-twitter-cards/) / [download](https://github.com/azurecurve/azrcrv-add-twitter-cards/releases/latest/)
  * Disable FLoC - [details](https://development.azurecurve.co.uk/classicpress-plugins/disaable-floc/) / [download](https://github.com/azurecurve/azrcrv-disaable-floc/releases/latest/)
  * Series Index - [details](https://development.azurecurve.co.uk/classicpress-plugins/series-index/) / [download](https://github.com/azurecurve/azrcrv-series-index/releases/latest/)
