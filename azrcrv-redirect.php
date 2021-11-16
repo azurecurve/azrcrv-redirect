@@ -3,7 +3,7 @@
  * ------------------------------------------------------------------------------
  * Plugin Name: Redirect
  * Description: Redirect URIs with a 301 (permanent) or 302 (temporary) redirect.
- * Version: 1.0.1
+ * Version: 1.0.2
  * Author: azurecurve
  * Author URI: https://development.azurecurve.co.uk/classicpress-plugins/
  * Plugin URI: https://development.azurecurve.co.uk/classicpress-plugins/redirect/
@@ -342,7 +342,7 @@ function display_options() {
 					
 						<td>
 							
-							<input name="redirect-permalink-changes" type="checkbox" id="redirect-permalink-changes" value="1" ' . checked( '1', $options['redirect-permalink-changes'], false ) . ' />
+							<input name="redirect-permalink-changes" type="checkbox" id="redirect-permalink-changes" value="1" ' . checked( '1', esc_attr( $options['redirect-permalink-changes'] ), false ) . ' />
 							<label for="redirect-permalink-changes"><span class="description">
 								' . esc_html__( 'Monitor for permalink changes and add redirect.', 'redirect' ) . '
 							</span></label>
@@ -412,11 +412,16 @@ function save_options() {
 	if ( ! empty( $_POST ) && check_admin_referer( 'azrcrv-r', 'azrcrv-r-nonce' ) ) {
 
 		// Retrieve original plugin options array
-		$options = get_option( 'azrcrv-r' );
+		$options         = get_option( 'azrcrv-r' );
+		$default_options = get_option_with_defaults( 'azrcrv-r' );
 
 		// update settings
-		$option_name             = 'default-redirect';
-		$options[ $option_name ] = (int) $_POST[ $option_name ];
+		$option_name = 'default-redirect';
+		if ( isset( $_POST[ $option_name ] ) and $_POST[ $option_name ] == 301 ) {
+			$options[ $option_name ] = 301;
+		} else {
+			$options[ $option_name ] = 302;
+		}
 
 		$option_name = 'redirect-permalink-changes';
 		if ( isset( $_POST[ $option_name ] ) ) {
@@ -425,8 +430,12 @@ function save_options() {
 			$options[ $option_name ] = 0;
 		}
 
-		$option_name             = 'redirect-rows';
-		$options[ $option_name ] = (int) $_POST[ $option_name ];
+		$option_name = 'redirect-rows';
+		if ( isset( $_POST[ $option_name ] ) and (int) $_POST[ $option_name ] > 0 ) {
+			$options[ $option_name ] = (int) $_POST[ $option_name ];
+		} else {
+			$options[ $option_name ] = $default_options[ $redirect - rows ];
+		}
 
 		// Store updated options array to database
 		update_option( 'azrcrv-r', $options );
@@ -474,39 +483,39 @@ function display_manage_redirects() {
 				</div>';
 		} elseif ( isset( $_GET['missing-urls'] ) ) {
 			echo '<div class="notice notice-error is-dismissible">
-					<p><strong>' . esc_html( 'Source or destination url is empty.', 'redirect' ) . '</strong></p>
+					<p><strong>' . esc_html__( 'Source or destination url is empty.', 'redirect' ) . '</strong></p>
 				</div>';
 		} elseif ( isset( $_GET['already-exists'] ) ) {
 			echo '<div class="notice notice-error is-dismissible">
-					<p><strong>' . esc_html( 'Redirect already exists for supplied source url.', 'redirect' ) . '</strong></p>
+					<p><strong>' . esc_html__( 'Redirect already exists for supplied source url.', 'redirect' ) . '</strong></p>
 				</div>';
 		} elseif ( isset( $_GET['invalid-type'] ) ) {
 			echo '<div class="notice notice-error is-dismissible">
-					<p><strong>' . esc_html( 'Invalid redirect type specified.', 'redirect' ) . '</strong></p>
+					<p><strong>' . esc_html__( 'Invalid redirect type specified.', 'redirect' ) . '</strong></p>
 				</div>';
 		} elseif ( isset( $_GET['not-relative'] ) ) {
 			echo '<div class="notice notice-error is-dismissible">
-					<p><strong>' . esc_html( 'Only relative urls can be redirected.', 'redirect' ) . '</strong></p>
+					<p><strong>' . esc_html__( 'Only relative urls can be redirected.', 'redirect' ) . '</strong></p>
 				</div>';
 		} elseif ( isset( $_GET['not-valid'] ) ) {
 			echo '<div class="notice notice-error is-dismissible">
-					<p><strong>' . esc_html( 'Only valid pages can be set as a destination.', 'redirect' ) . '</strong></p>
+					<p><strong>' . esc_html__( 'Only valid pages can be set as a destination.', 'redirect' ) . '</strong></p>
 				</div>';
 		} elseif ( isset( $_GET['deleted'] ) ) {
 			echo '<div class="notice notice-success is-dismissible">
-					<p><strong>' . esc_html( 'Redirect has been deleted.', 'redirect' ) . '</strong></p>
+					<p><strong>' . esc_html__( 'Redirect has been deleted.', 'redirect' ) . '</strong></p>
 				</div>';
 		} elseif ( isset( $_GET['redirect-edited'] ) ) {
 			echo '<div class="notice notice-success is-dismissible">
-					<p><strong>' . esc_html( 'Redirect has been edited.', 'redirect' ) . '</strong></p>
+					<p><strong>' . esc_html__( 'Redirect has been edited.', 'redirect' ) . '</strong></p>
 				</div>';
 		} elseif ( isset( $_GET['delete-failed'] ) ) {
 			echo '<div class="notice notice-error is-dismissible">
-					<p><strong>' . esc_html( 'Delete of redirect failed.', 'redirect' ) . '</strong></p>
+					<p><strong>' . esc_html__( 'Delete of redirect failed.', 'redirect' ) . '</strong></p>
 				</div>';
 		} elseif ( isset( $_GET['edit-failed'] ) ) {
 			echo '<div class="notice notice-error is-dismissible">
-					<p><strong>' . esc_html( 'Edit of redirect failed.', 'redirect' ) . '</strong></p>
+					<p><strong>' . esc_html__( 'Edit of redirect failed.', 'redirect' ) . '</strong></p>
 				</div>';
 		}
 
@@ -529,9 +538,7 @@ function display_manage_redirects() {
 		if ( isset( $_GET['id'] ) ) {
 			$id = (int) $_GET['id'];
 
-			// $row_count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $tablename WHERE id = %d", $id));
-
-			$sql = $wpdb->prepare( "SELECT source_url,redirect_type,destination_url FROM $tablename WHERE id = %d LIMIT 0,1", $id );
+			$sql = $wpdb->prepare( 'SELECT source_url,redirect_type,destination_url FROM %1s WHERE id = %d LIMIT 0,1', $tablename, $id );
 
 			$row = $wpdb->get_row( $sql );
 
@@ -620,7 +627,7 @@ function display_manage_redirects() {
 		$page_end = $redirect_rows;
 		$limit    = $page_start . ', ' . $page_end;
 
-		$sql = "SELECT id,source_url,redirect_count,DATE_FORMAT(last_redirect, '%Y-%m-%d') AS last_redirect,status,redirect_type,destination_url FROM $tablename ORDER BY source_url LIMIT " . $limit;
+		$sql = $wpdb->prepare( "SELECT id,source_url,redirect_count,DATE_FORMAT(last_redirect, '%Y-%m-%%d') AS last_redirect,status,redirect_type,destination_url FROM %1s ORDER BY source_url LIMIT %2s", $tablename, $limit );
 
 		// echo $sql.'<p />';
 
@@ -836,35 +843,38 @@ function manage_redirects() {
 
 		$tablename = $wpdb->prefix . DATABASE_TABLE;
 
-		// Retrieve original plugin options array
-		$options = get_option( 'azrcrv-r' );
-
-		$page = '';
-		if ( isset( $_POST['p'] ) ) {
-			$page = '&p=' . sanitize_text_field( wp_unslash( $_POST['p'] ) );
-		}
-
-		$id = (int) $_POST['id'];
-
 		if ( isset( $_POST['button_action'] ) ) {
-			if ( $_POST['button_action'] == 'delete' ) {
 
-				$wpdb->delete( $tablename, array( 'id' => esc_attr( $id ) ) );
+			// Retrieve original plugin options array
+			$options = get_option( 'azrcrv-r' );
 
-				wp_redirect( add_query_arg( 'page', 'azrcrv-r-mr&deleted' . esc_html( $page ), admin_url( 'admin.php' ) ) );
+			$page = '';
+			if ( isset( $_POST['p'] ) ) {
+				$page = '&p=' . sanitize_text_field( wp_unslash( $_POST['p'] ) );
+			}
 
-			} elseif ( $_POST['button_action'] == 'edit' ) {
+			if ( isset( $_POST['id'] ) and (int) $_POST['id'] > 0 ) {
+				$id = (int) $_POST['id'];
 
-				wp_redirect( add_query_arg( 'page', 'azrcrv-r-mr&edit&id=' . $id . esc_html( $page ), admin_url( 'admin.php' ) ) );
+				if ( $_POST['button_action'] == 'delete' ) {
 
-			} else {
+					$wpdb->delete( $tablename, array( 'id' => esc_attr( $id ) ) );
 
-				$sql = "UPDATE $tablename SET status = CASE WHEN status = 'enabled' THEN 'disabled' ELSE 'enabled' END WHERE id = %d";
+					wp_redirect( add_query_arg( 'page', 'azrcrv-r-mr&deleted' . esc_html( $page ), admin_url( 'admin.php' ) ) );
 
-				$wpdb->query( $wpdb->prepare( $sql, esc_attr( $id ) ) );
+				} elseif ( $_POST['button_action'] == 'edit' ) {
 
-				wp_redirect( add_query_arg( 'page', 'azrcrv-r-mr&refresh' . esc_html( $page ), admin_url( 'admin.php' ) ) );
+					wp_redirect( add_query_arg( 'page', 'azrcrv-r-mr&edit&id=' . $id . esc_html( $page ), admin_url( 'admin.php' ) ) );
 
+				} else {
+
+					$sql = "UPDATE %1s SET status = CASE WHEN status = 'enabled' THEN 'disabled' ELSE 'enabled' END WHERE id = %d";
+
+					$wpdb->query( $wpdb->prepare( $sql, $tablename, esc_attr( $id ) ) );
+
+					wp_redirect( add_query_arg( 'page', 'azrcrv-r-mr&refresh' . esc_html( $page ), admin_url( 'admin.php' ) ) );
+
+				}
 			}
 		}
 		exit;
@@ -894,10 +904,10 @@ function get_pagination( $rowsperpage ) {
 		$currentpage = 1;
 	}
 
-	$sql = "SELECT COUNT(*) FROM $tablename";
+	$sql = $wpdb->prepare( 'SELECT COUNT(*) FROM %1s', $tablename );
 
 	// echo $sql.'<p />';
-	$numrows = $wpdb->get_var( "SELECT COUNT(*) FROM $tablename" );
+	$numrows = $wpdb->get_var( $sql );
 
 	$totalpages = ceil( $numrows / $rowsperpage );
 
@@ -967,17 +977,17 @@ function add_redirect() {
 
 		global $wpdb;
 
-		// Retrieve original plugin options array
-		$options = get_option( 'azrcrv-r' );
-
-		$page = '';
-		if ( isset( $_POST['p'] ) ) {
-			$page = '&p=' . sanitize_text_field( wp_unslash( $_POST['p'] ) );
-		}
-
-		$id = (int) $_POST['id'];
-
 		if ( isset( $_POST['btn_add'] ) ) {
+
+			// Retrieve original plugin options array
+			$options = get_option( 'azrcrv-r' );
+
+			$page = '';
+			if ( isset( $_POST['p'] ) ) {
+				$page = '&p=' . sanitize_text_field( wp_unslash( $_POST['p'] ) );
+			}
+
+			$id = (int) $_POST['id'];
 
 			if ( isset( $_POST['source-url'] ) ) {
 				$before = trailingslashit( wp_parse_url( sanitize_text_field( wp_unslash( $_POST['source-url'] ) ), PHP_URL_PATH ) );
@@ -1010,9 +1020,9 @@ function add_redirect() {
 				$tablename = $wpdb->prefix . DATABASE_TABLE;
 
 				if ( $id == 0 ) {
-					$sql = $wpdb->prepare( "INSERT INTO $tablename (source_url,status,redirect_type,destination_url, added, added_utc) VALUES (%s, 'enabled', %d, %s, Now(), UTC_TIMESTAMP())", $before, $redirect_type, $after );
+					$sql = $wpdb->prepare( "INSERT INTO %1s (source_url,status,redirect_type,destination_url, added, added_utc) VALUES (%s, 'enabled', %d, %s, Now(), UTC_TIMESTAMP())", $tablename, $before, $redirect_type, $after );
 				} else {
-					$sql = $wpdb->prepare( "UPDATE $tablename SET source_url = %s, redirect_type = %d, destination_url = %s WHERE id = %d", $before, $redirect_type, $after, $id );
+					$sql = $wpdb->prepare( 'UPDATE %1s SET source_url = %s, redirect_type = %d, destination_url = %s WHERE id = %d', $tablename, $before, $redirect_type, $after, $id );
 				}
 
 				$wpdb->query( $sql );
@@ -1040,7 +1050,7 @@ function redirect_incoming() {
 
 	$options = get_option_with_defaults( 'azrcrv-r' );
 
-	$url = trailingslashit( esc_url_raw( wp_unslash( strtok( $_SERVER['REQUEST_URI'], '?' ) ) ) );
+	$url = trailingslashit( esc_url_raw( strtok( wp_unslash( $_SERVER['REQUEST_URI'] ), '?' ) ) );
 
 	$query_string = sanitize_text_field( wp_unslash( $_SERVER['QUERY_STRING'] ) );
 
@@ -1050,7 +1060,7 @@ function redirect_incoming() {
 		if ( $redirect->status == 'enabled' ) {
 
 			$tablename = $wpdb->prefix . DATABASE_TABLE;
-			$sql       = $wpdb->prepare( "UPDATE $tablename SET redirect_count = redirect_count + 1, last_redirect = NOW(), last_redirect_utc = UTC_TIMESTAMP() WHERE ID = %d", $redirect->id );
+			$sql       = $wpdb->prepare( 'UPDATE %1s SET redirect_count = redirect_count + 1, last_redirect = NOW(), last_redirect_utc = UTC_TIMESTAMP() WHERE ID = %d', $tablename, $redirect->id );
 
 			$wpdb->query( $sql );
 
@@ -1077,7 +1087,7 @@ function check_for_redirect( $url ) {
 
 	$tablename = $wpdb->prefix . DATABASE_TABLE;
 
-	$sql = $wpdb->prepare( "SELECT id,destination_url,redirect_type,status FROM $tablename WHERE source_url = %s LIMIT 0,1", esc_url_raw( $url ) );
+	$sql = $wpdb->prepare( 'SELECT id,destination_url,redirect_type,status FROM %1s WHERE source_url = %s LIMIT 0,1', $tablename, esc_url_raw( $url ) );
 
 	$redirect = $wpdb->get_row( $sql );
 
@@ -1124,12 +1134,12 @@ function add_redirect_for_changed_permalink( $post_id, $post_after, $post_before
 			if ( $redirect ) {
 
 				// insert new redirect
-				$sql = $wpdb->prepare( "UPDATE $tablename SET destination_url = %s WHERE id = %d", $after, $redirect->id );
+				$sql = $wpdb->prepare( 'UPDATE %1s SET destination_url = %s WHERE id = %d', $tablename, $after, $redirect->id );
 
 			} else {
 
 				// insert new redirect
-				$sql = $wpdb->prepare( "INSERT INTO $tablename (source_url,status,redirect_type,destination_url, added, added_utc) VALUES (%s, 'enabled', %d, %s, Now(), UTC_TIMESTAMP())", $before, esc_attr( $options['default-redirect'] ), $after );
+				$sql = $wpdb->prepare( "INSERT INTO %1s (source_url,status,redirect_type,destination_url, added, added_utc) VALUES (%s, 'enabled', %d, %s, Now(), UTC_TIMESTAMP())", $tablename, $before, esc_attr( $options['default-redirect'] ), $after );
 
 			}
 

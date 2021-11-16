@@ -66,7 +66,7 @@ if ( ! function_exists( 'azrcrv_display_plugin_menu' ) ) {
 		foreach ( $plugin_array as $plugin_name => $plugin_details ) {
 			if ( $plugin_details['retired'] == 0 ) {
 				if ( is_plugin_active( $plugin_details['plugin_link'] ) ) {
-					echo '<a href="' . esc_raw_url( $plugin_details['admin_URL'] ) . '" class="azrcrv-plugin-index">' . esc_html( $plugin_name ) . '</a>';
+					echo '<a href="' . esc_url_raw( $plugin_details['admin_URL'] ) . '" class="azrcrv-plugin-index">' . esc_html( $plugin_name ) . '</a>';
 				}
 			}
 		}
@@ -82,7 +82,7 @@ if ( ! function_exists( 'azrcrv_display_plugin_menu' ) ) {
 		foreach ( $plugin_array as $plugin_name => $plugin_details ) {
 			if ( $plugin_details['retired'] == 0 ) {
 				if ( ! is_plugin_active( $plugin_details['plugin_link'] ) ) {
-					echo '<a href="' . esc_raw_url( $plugin_details['dev_URL'] ) . '" class="azrcrv-plugin-index">' . esc_html( $plugin_name ) . '</a>';
+					echo '<a href="' . esc_url_raw( $plugin_details['dev_URL'] ) . '" class="azrcrv-plugin-index">' . esc_html( $plugin_name ) . '</a>';
 					$countofplugins += 1;
 				}
 			}
