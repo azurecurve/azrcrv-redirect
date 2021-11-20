@@ -3,7 +3,7 @@
  * ------------------------------------------------------------------------------
  * Plugin Name: Redirect
  * Description: Redirect URIs with a 301 (permanent) or 302 (temporary) redirect.
- * Version: 1.0.2
+ * Version: 1.0.3
  * Author: azurecurve
  * Author URI: https://development.azurecurve.co.uk/classicpress-plugins/
  * Plugin URI: https://development.azurecurve.co.uk/classicpress-plugins/redirect/
@@ -186,7 +186,7 @@ function add_plugin_action_link( $links, $file ) {
 	}
 
 	if ( $file == $this_plugin ) {
-		$settings_link = '<a href="' . admin_url( 'admin.php?page=azrcrv-r' ) . '"><img src="' . esc_url_raw( plugins_url( '/pluginmenu/images/logo.svg', __FILE__ ) ) . '" style="padding-top: 2px; margin-right: -5px; height: 16px; width: 16px;" alt="azurecurve" />' . esc_html__( 'Settings', 'redirect' ) . '</a>';
+		$settings_link = '<a href="' . esc_url_raw( admin_url( 'admin.php?page=azrcrv-r' ) ) . '"><img src="' . esc_url_raw( plugins_url( '/pluginmenu/images/logo.svg', __FILE__ ) ) . '" style="padding-top: 2px; margin-right: -5px; height: 16px; width: 16px;" alt="azurecurve" />' . esc_html__( 'Settings', 'redirect' ) . '</a>';
 		array_unshift( $links, $settings_link );
 	}
 
@@ -441,7 +441,7 @@ function save_options() {
 		update_option( 'azrcrv-r', $options );
 
 		// Redirect the page to the configuration form that was processed
-		wp_redirect( add_query_arg( 'page', 'azrcrv-r&settings-updated', admin_url( 'admin.php' ) ) );
+		wp_safe_redirect( add_query_arg( 'page', 'azrcrv-r&settings-updated', admin_url( 'admin.php' ) ) );
 		exit;
 	}
 }
@@ -475,11 +475,11 @@ function display_manage_redirects() {
 
 		if ( isset( $_GET['redirect-added'] ) ) {
 			echo '<div class="notice notice-success is-dismissible">
-					<p><strong>' . esc_html( 'Redirect has been added.', 'redirect' ) . '</strong></p>
+					<p><strong>' . esc_html__( 'Redirect has been added.', 'redirect' ) . '</strong></p>
 				</div>';
 		} elseif ( isset( $_GET['cannot-redirect-home'] ) ) {
 			echo '<div class="notice notice-error is-dismissible">
-					<p><strong>' . esc_html( 'Redirect cannot be added for the site home page.', 'redirect' ) . '</strong></p>
+					<p><strong>' . esc_html__( 'Redirect cannot be added for the site home page.', 'redirect' ) . '</strong></p>
 				</div>';
 		} elseif ( isset( $_GET['missing-urls'] ) ) {
 			echo '<div class="notice notice-error is-dismissible">
@@ -538,8 +538,10 @@ function display_manage_redirects() {
 		if ( isset( $_GET['id'] ) ) {
 			$id = (int) $_GET['id'];
 
+			// "complex" placeholder used as string cannot be wrapped in single quotes
 			$sql = $wpdb->prepare( 'SELECT source_url,redirect_type,destination_url FROM %1s WHERE id = %d LIMIT 0,1', $tablename, $id );
 
+			// wpdb->prepare used above
 			$row = $wpdb->get_row( $sql );
 
 			if ( $row ) {
@@ -627,10 +629,13 @@ function display_manage_redirects() {
 		$page_end = $redirect_rows;
 		$limit    = $page_start . ', ' . $page_end;
 
-		$sql = $wpdb->prepare( "SELECT id,source_url,redirect_count,DATE_FORMAT(last_redirect, '%Y-%m-%%d') AS last_redirect,status,redirect_type,destination_url FROM %1s ORDER BY source_url LIMIT %2s", $tablename, $limit );
+		// "complex" placeholder used as string cannot be wrapped in single quotes
+		$date_format = '%Y-%m-%d';
+		$sql         = $wpdb->prepare( "SELECT id,source_url,redirect_count,DATE_FORMAT(last_redirect, '%1s') AS last_redirect,status,redirect_type,destination_url FROM %2s ORDER BY source_url LIMIT %3s", $date_format, $tablename, $limit );
 
 		// echo $sql.'<p />';
 
+		// wpdb->prepare used above
 		$resultset = $wpdb->get_results( $sql );
 
 		$tab_2 = '<h2>' . esc_html__( 'Current Redirects', 'redirect' ) . '</h2>
@@ -860,19 +865,21 @@ function manage_redirects() {
 
 					$wpdb->delete( $tablename, array( 'id' => esc_attr( $id ) ) );
 
-					wp_redirect( add_query_arg( 'page', 'azrcrv-r-mr&deleted' . esc_html( $page ), admin_url( 'admin.php' ) ) );
+					wp_safe_redirect( add_query_arg( 'page', 'azrcrv-r-mr&deleted' . esc_html( $page ), admin_url( 'admin.php' ) ) );
 
 				} elseif ( $_POST['button_action'] == 'edit' ) {
 
-					wp_redirect( add_query_arg( 'page', 'azrcrv-r-mr&edit&id=' . $id . esc_html( $page ), admin_url( 'admin.php' ) ) );
+					wp_safe_redirect( add_query_arg( 'page', 'azrcrv-r-mr&edit&id=' . $id . esc_html( $page ), admin_url( 'admin.php' ) ) );
 
 				} else {
 
+					// "complex" placeholder used as string cannot be wrapped in single quotes
 					$sql = "UPDATE %1s SET status = CASE WHEN status = 'enabled' THEN 'disabled' ELSE 'enabled' END WHERE id = %d";
 
+					// string with palceholders created above
 					$wpdb->query( $wpdb->prepare( $sql, $tablename, esc_attr( $id ) ) );
 
-					wp_redirect( add_query_arg( 'page', 'azrcrv-r-mr&refresh' . esc_html( $page ), admin_url( 'admin.php' ) ) );
+					wp_safe_redirect( add_query_arg( 'page', 'azrcrv-r-mr&refresh' . esc_html( $page ), admin_url( 'admin.php' ) ) );
 
 				}
 			}
@@ -904,9 +911,11 @@ function get_pagination( $rowsperpage ) {
 		$currentpage = 1;
 	}
 
+	// "complex" placeholder used as string cannot be wrapped in single quotes
 	$sql = $wpdb->prepare( 'SELECT COUNT(*) FROM %1s', $tablename );
 
 	// echo $sql.'<p />';
+	// wpdb->prepare used above
 	$numrows = $wpdb->get_var( $sql );
 
 	$totalpages = ceil( $numrows / $rowsperpage );
@@ -994,7 +1003,11 @@ function add_redirect() {
 			} else {
 				$before = '';
 			}
-			$redirect_type = (int) $_POST['redirect-type'];
+			if ( isset( $_POST['redirect-type'] ) ) {
+				$redirect_type = (int) $_POST['redirect-type'];
+			} else {
+				$redirect_type = 0;
+			}
 			if ( isset( $_POST['destination-url'] ) ) {
 				$after = trailingslashit( wp_parse_url( sanitize_text_field( wp_unslash( $_POST['destination-url'] ) ), PHP_URL_PATH ) );
 			} else {
@@ -1020,11 +1033,14 @@ function add_redirect() {
 				$tablename = $wpdb->prefix . DATABASE_TABLE;
 
 				if ( $id == 0 ) {
+					// "complex" placeholder used as string cannot be wrapped in single quotes
 					$sql = $wpdb->prepare( "INSERT INTO %1s (source_url,status,redirect_type,destination_url, added, added_utc) VALUES (%s, 'enabled', %d, %s, Now(), UTC_TIMESTAMP())", $tablename, $before, $redirect_type, $after );
 				} else {
+					// "complex" placeholder used as string cannot be wrapped in single quotes
 					$sql = $wpdb->prepare( 'UPDATE %1s SET source_url = %s, redirect_type = %d, destination_url = %s WHERE id = %d', $tablename, $before, $redirect_type, $after, $id );
 				}
 
+				// wpdb->prepare used above
 				$wpdb->query( $sql );
 
 				if ( $id == 0 ) {
@@ -1034,7 +1050,7 @@ function add_redirect() {
 				}
 			}
 		}
-		wp_redirect( add_query_arg( 'page', 'azrcrv-r-mr&' . $message . $page, admin_url( 'admin.php' ) ) );
+		wp_safe_redirect( add_query_arg( 'page', 'azrcrv-r-mr&' . $message . $page, admin_url( 'admin.php' ) ) );
 		exit;
 	}
 }
@@ -1060,14 +1076,17 @@ function redirect_incoming() {
 		if ( $redirect->status == 'enabled' ) {
 
 			$tablename = $wpdb->prefix . DATABASE_TABLE;
-			$sql       = $wpdb->prepare( 'UPDATE %1s SET redirect_count = redirect_count + 1, last_redirect = NOW(), last_redirect_utc = UTC_TIMESTAMP() WHERE ID = %d', $tablename, $redirect->id );
+			// "complex" placeholder used as string cannot be wrapped in single quotes
+			$sql = $wpdb->prepare( 'UPDATE %1s SET redirect_count = redirect_count + 1, last_redirect = NOW(), last_redirect_utc = UTC_TIMESTAMP() WHERE ID = %d', $tablename, $redirect->id );
 
+			// wpdb->prepare used above
 			$wpdb->query( $sql );
 
 			if ( strlen( $query_string ) > 0 ) {
 				$query_string = '?' . esc_html( $query_string );
 			}
 
+			// redirects may not be internal; future version will allow extra hosts for wp_safe_redirect
 			wp_redirect( $redirect->destination_url . $query_string, $redirect->redirect_type );
 			exit;
 
@@ -1087,8 +1106,10 @@ function check_for_redirect( $url ) {
 
 	$tablename = $wpdb->prefix . DATABASE_TABLE;
 
+	// "complex" placeholder used as string cannot be wrapped in single quotes
 	$sql = $wpdb->prepare( 'SELECT id,destination_url,redirect_type,status FROM %1s WHERE source_url = %s LIMIT 0,1', $tablename, esc_url_raw( $url ) );
 
+	// wpdb->prepare used above
 	$redirect = $wpdb->get_row( $sql );
 
 	return $redirect;
@@ -1134,15 +1155,18 @@ function add_redirect_for_changed_permalink( $post_id, $post_after, $post_before
 			if ( $redirect ) {
 
 				// insert new redirect
+				// "complex" placeholder used as string cannot be wrapped in single quotes
 				$sql = $wpdb->prepare( 'UPDATE %1s SET destination_url = %s WHERE id = %d', $tablename, $after, $redirect->id );
 
 			} else {
 
 				// insert new redirect
+				// "complex" placeholder used as string cannot be wrapped in single quotes
 				$sql = $wpdb->prepare( "INSERT INTO %1s (source_url,status,redirect_type,destination_url, added, added_utc) VALUES (%s, 'enabled', %d, %s, Now(), UTC_TIMESTAMP())", $tablename, $before, esc_attr( $options['default-redirect'] ), $after );
 
 			}
 
+			// wpdb->prepare used above
 			$wpdb->query( $sql );
 
 		}

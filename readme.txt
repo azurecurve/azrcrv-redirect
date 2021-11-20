@@ -1,13 +1,13 @@
 === Redirect ===
 
 Description:	Redirect URIs with a 301 (permanent) or 302 (temporary) redirect.
-Version:		1.0.2
+Version:		1.0.3
 Tags:			redirect
 Author:			azurecurve
 Author URI:		https://development.azurecurve.co.uk/
 Contributors:	azurecurve
 Plugin URI:		https://development.azurecurve.co.uk/classicpress-plugins/redirect/
-Download link:	https://github.com/azurecurve/azrcrv-redirect/releases/download/v1.0.2/azrcrv-redirect.zip
+Download link:	https://github.com/azurecurve/azrcrv-redirect/releases/download/v1.0.3/azrcrv-redirect.zip
 Donate link:	https://development.azurecurve.co.uk/support-development/
 Requires PHP:	5.6
 Requires:		1.0.0
@@ -51,6 +51,10 @@ This plugin is developed for ClassicPress, but will likely work on WordPress.
 == Changelog ==
 
 # Changelog
+
+### [Version 1.0.3](https://github.com/azurecurve/azrcrv-redirect/releases/v1.0.3)
+ * Replace use of wp_redirect with wp_safe_redirect for internal redirects
+ * Improve sanitisation and escaping.
 
 ### [Version 1.0.2](https://github.com/azurecurve/azrcrv-redirect/releases/v1.0.2)
  * Fix issues with security (escaping and sanitizing).
