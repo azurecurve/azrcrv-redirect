@@ -3,11 +3,11 @@
  * ------------------------------------------------------------------------------
  * Plugin Name: Redirect
  * Description: Redirect URIs with a 301 (permanent) or 302 (temporary) redirect.
- * Version: 1.0.3
+ * Version: 1.0.5
  * Author: azurecurve
  * Author URI: https://development.azurecurve.co.uk/classicpress-plugins/
  * Plugin URI: https://development.azurecurve.co.uk/classicpress-plugins/redirect/
- * Text Domain: redirect
+ * Text Domain: azrcrv-r
  * Domain Path: /languages
  * ------------------------------------------------------------------------------
  * This is free software released under the terms of the General Public License,
@@ -25,11 +25,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die();
 }
 
-// include plugin menu
+// include plugin menu.
 require_once dirname( __FILE__ ) . '/pluginmenu/menu.php';
 add_action( 'admin_init', 'azrcrv_create_plugin_menu_r' );
 
-// include update client
+// include update client.
 require_once dirname( __FILE__ ) . '/libraries/updateclient/UpdateClient.class.php';
 
 /**
@@ -38,14 +38,14 @@ require_once dirname( __FILE__ ) . '/libraries/updateclient/UpdateClient.class.p
  * @since 1.0.0
  */
 
-// constants
+// constants.
 const DB_VERSION     = '1.0.0';
 const DATABASE_TABLE = 'azrcrv_redirects';
 
-// register activation hooks
+// register activation hooks.
 register_activation_hook( __FILE__, __NAMESPACE__ . '\\install' );
 
-// add actions
+// add actions.
 add_action( 'plugins_loaded', __NAMESPACE__ . '\\install' );
 add_action( 'admin_menu', __NAMESPACE__ . '\\create_admin_menu' );
 add_action( 'admin_init', __NAMESPACE__ . '\\register_admin_styles' );
@@ -58,7 +58,7 @@ add_action( 'init', __NAMESPACE__ . '\\redirect_incoming' );
 add_action( 'pre_post_update', __NAMESPACE__ . '\\pre_post_update', 10, 2 );
 add_action( 'post_updated', __NAMESPACE__ . '\\add_redirect_for_changed_permalink', 11, 3 );
 
-// add filters
+// add filters.
 add_filter( 'plugin_action_links', __NAMESPACE__ . '\\add_plugin_action_link', 10, 2 );
 add_filter( 'codepotent_update_manager_image_path', __NAMESPACE__ . '\\custom_image_path' );
 add_filter( 'codepotent_update_manager_image_url', __NAMESPACE__ . '\\custom_image_url' );
@@ -109,7 +109,7 @@ function install() {
  * @since 1.0.0
  */
 function register_admin_styles() {
-	wp_register_style( 'azrcrv-r-admin-styles', plugins_url( 'assets/css/admin.css', __FILE__ ) );
+	wp_register_style( 'azrcrv-r-admin-styles', plugins_url( 'assets/css/admin.css', __FILE__ ), array(), '1.0.0' );
 }
 
 /**
@@ -118,7 +118,7 @@ function register_admin_styles() {
  * @since 1.0.0
  */
 function enqueue_admin_styles() {
-	if ( isset( $_GET['page'] ) and ( $_GET['page'] == 'azrcrv-r' or $_GET['page'] == 'azrcrv-r-ar' or $_GET['page'] == 'azrcrv-r-mr' ) ) {
+	if ( isset( $_GET['page'] ) && ( $_GET['page'] == 'azrcrv-r' || $_GET['page'] == 'azrcrv-r-mr' ) ) {
 		wp_enqueue_style( 'azrcrv-r-admin-styles' );
 	}
 }
@@ -141,7 +141,7 @@ function load_languages() {
 function get_option_with_defaults( $option_name ) {
 
 	$defaults = array(
-		'default-redirect'           => 301, // permanent = 301
+		'default-redirect'           => 301, // permanent = 301.
 		'redirect-permalink-changes' => 0,
 		'redirect-rows'              => 20,
 	);
@@ -186,7 +186,7 @@ function add_plugin_action_link( $links, $file ) {
 	}
 
 	if ( $file == $this_plugin ) {
-		$settings_link = '<a href="' . esc_url_raw( admin_url( 'admin.php?page=azrcrv-r' ) ) . '"><img src="' . esc_url_raw( plugins_url( '/pluginmenu/images/logo.svg', __FILE__ ) ) . '" style="padding-top: 2px; margin-right: -5px; height: 16px; width: 16px;" alt="azurecurve" />' . esc_html__( 'Settings', 'redirect' ) . '</a>';
+		$settings_link = '<a href="' . esc_url_raw( admin_url( 'admin.php?page=azrcrv-r' ) ) . '"><img src="' . esc_url_raw( plugins_url( '/pluginmenu/images/logo.svg', __FILE__ ) ) . '" style="padding-top: 2px; margin-right: -5px; height: 16px; width: 16px;" alt="azurecurve" />' . esc_html__( 'Settings', 'azrcrv-r' ) . '</a>';
 		array_unshift( $links, $settings_link );
 	}
 
@@ -225,8 +225,8 @@ function custom_image_url( $url ) {
 function create_admin_menu() {
 
 	add_menu_page(
-		esc_html__( 'Redirect', 'redirect' ),
-		esc_html__( 'Redirect', 'redirect' ),
+		esc_html__( 'Redirect', 'azrcrv-r' ),
+		esc_html__( 'Redirect', 'azrcrv-r' ),
 		'manage_options',
 		'azrcrv-r',
 		__NAMESPACE__ . '\\display_options',
@@ -236,8 +236,8 @@ function create_admin_menu() {
 
 	add_submenu_page(
 		'azrcrv-r',
-		esc_html__( 'Redirect Settings', 'redirect' ),
-		esc_html__( 'Settings', 'redirect' ),
+		esc_html__( 'Redirect Settings', 'azrcrv-r' ),
+		esc_html__( 'Settings', 'azrcrv-r' ),
 		'manage_options',
 		'azrcrv-r',
 		__NAMESPACE__ . '\\display_options'
@@ -245,8 +245,8 @@ function create_admin_menu() {
 
 	add_submenu_page(
 		'azrcrv-r',
-		esc_html__( 'Manage Redirects', 'redirect' ),
-		esc_html__( 'Manage Redirects', 'redirect' ),
+		esc_html__( 'Manage Redirects', 'azrcrv-r' ),
+		esc_html__( 'Manage Redirects', 'azrcrv-r' ),
 		'manage_options',
 		'azrcrv-r-mr',
 		__NAMESPACE__ . '\\display_manage_redirects'
@@ -254,8 +254,8 @@ function create_admin_menu() {
 
 	add_submenu_page(
 		'azrcrv-plugin-menu',
-		esc_html__( 'Redirect Settings', 'redirect' ),
-		esc_html__( 'Redirect', 'redirect' ),
+		esc_html__( 'Redirect Settings', 'azrcrv-r' ),
+		esc_html__( 'Redirect', 'azrcrv-r' ),
 		'manage_options',
 		'azrcrv-r',
 		__NAMESPACE__ . '\\display_options'
@@ -280,12 +280,12 @@ function load_admin_style() {
  */
 function display_options() {
 	if ( ! current_user_can( 'manage_options' ) ) {
-		wp_die( esc_html__( 'You do not have sufficient permissions to access this page.', 'redirect' ) );
+		wp_die( esc_html__( 'You do not have sufficient permissions to access this page.', 'azrcrv-r' ) );
 	}
 
 	global $wpdb;
 
-	// Retrieve plugin configuration options from database
+	// Retrieve plugin configuration options from database.
 	$options = get_option_with_defaults( 'azrcrv-r' );
 
 	echo '<div id="azrcrv-r-general" class="wrap">';
@@ -301,7 +301,7 @@ function display_options() {
 
 		if ( isset( $_GET['settings-updated'] ) ) {
 			echo '<div class="notice notice-success is-dismissible">
-					<p><strong>' . esc_html__( 'Settings have been saved.', 'redirect' ) . '</strong></p>
+					<p><strong>' . esc_html__( 'Settings have been saved.', 'azrcrv-r' ) . '</strong></p>
 				</div>';
 		}
 
@@ -317,7 +317,7 @@ function display_options() {
 					<tr>
 						<th scope="row">
 							
-								' . esc_html__( 'Default Redirect Type', 'redirect' ) . '
+								' . esc_html__( 'Default Redirect Type', 'azrcrv-r' ) . '
 							
 						</th>
 					
@@ -327,7 +327,7 @@ function display_options() {
 								<option value="301" ' . $redirect_301 . '>301 - Permanent Redirect</option>
 								<option value="302" ' . $redirect_302 . '>302 - Temporary Redirect</option>
 							</select>
-							<p class="description">' . esc_html__( 'Type of redirect to use as default.', 'redirect' ) . '</p>
+							<p class="description">' . esc_html__( 'Type of redirect to use as default.', 'azrcrv-r' ) . '</p>
 						
 						</td>
 	
@@ -336,7 +336,7 @@ function display_options() {
 					<tr>
 						<th scope="row">
 							
-								' . esc_html__( 'Redirect Permalink Changes', 'redirect' ) . '
+								' . esc_html__( 'Redirect Permalink Changes', 'azrcrv-r' ) . '
 							
 						</th>
 					
@@ -344,7 +344,7 @@ function display_options() {
 							
 							<input name="redirect-permalink-changes" type="checkbox" id="redirect-permalink-changes" value="1" ' . checked( '1', esc_attr( $options['redirect-permalink-changes'] ), false ) . ' />
 							<label for="redirect-permalink-changes"><span class="description">
-								' . esc_html__( 'Monitor for permalink changes and add redirect.', 'redirect' ) . '
+								' . esc_html__( 'Monitor for permalink changes and add redirect.', 'azrcrv-r' ) . '
 							</span></label>
 							
 						</td>
@@ -354,7 +354,7 @@ function display_options() {
 					<tr>
 						<th scope="row">
 							
-								' . esc_html__( 'Redirect Rows', 'redirect' ) . '
+								' . esc_html__( 'Redirect Rows', 'azrcrv-r' ) . '
 							
 						</th>
 					
@@ -362,7 +362,7 @@ function display_options() {
 							
 							<input name="redirect-rows" type="number" step="1" min="1" id="redirect-rows" value="' . stripslashes( $options['redirect-rows'] ) . '" class="small-text" />
 							<label for="redirect-rows"><span class="description">
-								' . esc_html__( 'Number of rows to show in Manage Redirects list.', 'redirect' ) . '
+								' . esc_html__( 'Number of rows to show in Manage Redirects list.', 'azrcrv-r' ) . '
 							</span></label>
 							
 						</td>
@@ -374,23 +374,23 @@ function display_options() {
 		?>
 		<form method="post" action="admin-post.php">
 			<fieldset>
-				
+
 				<input type="hidden" name="action" value="azrcrv_r_save_options" />
 				<input name="page_options" type="hidden" value="default-redirect,redirect-permalink-changes" />
-				
+
 				<?php
-					// <!-- Adding security through hidden referrer field -->
+					// <!-- Adding security through hidden referrer field -->.
 					wp_nonce_field( 'azrcrv-r', 'azrcrv-r-nonce' );
 				?>
-				
+
 				<div id="tabs">
 					<div id="tab-panel-1" >
 						<?php echo $tab_1; ?>
 					</div>
 				</div>
 			</fieldset>
-			
-			<input type="submit" name="btn_save" value="<?php esc_html_e( 'Save Settings', 'redirect' ); ?>" class="button-primary"/>
+
+			<input type="submit" name="btn_save" value="<?php esc_html_e( 'Save Settings', 'azrcrv-r' ); ?>" class="button-primary"/>
 		</form>
 	</div>
 	<?php
@@ -403,21 +403,21 @@ function display_options() {
  * @since 1.0.0
  */
 function save_options() {
-	// Check that user has proper security level
+	// Check that user has proper security level.
 	if ( ! current_user_can( 'manage_options' ) ) {
-		wp_die( esc_html__( 'You do not have permissions to perform this action', 'redirect' ) );
+		wp_die( esc_html__( 'You do not have permissions to perform this action', 'azrcrv-r' ) );
 	}
 
-	// Check that nonce field created in configuration form is present
+	// Check that nonce field created in configuration form is present.
 	if ( ! empty( $_POST ) && check_admin_referer( 'azrcrv-r', 'azrcrv-r-nonce' ) ) {
 
-		// Retrieve original plugin options array
+		// Retrieve original plugin options array.
 		$options         = get_option( 'azrcrv-r' );
 		$default_options = get_option_with_defaults( 'azrcrv-r' );
 
-		// update settings
+		// update settings.
 		$option_name = 'default-redirect';
-		if ( isset( $_POST[ $option_name ] ) and $_POST[ $option_name ] == 301 ) {
+		if ( isset( $_POST[ $option_name ] ) && $_POST[ $option_name ] == 301 ) {
 			$options[ $option_name ] = 301;
 		} else {
 			$options[ $option_name ] = 302;
@@ -431,16 +431,16 @@ function save_options() {
 		}
 
 		$option_name = 'redirect-rows';
-		if ( isset( $_POST[ $option_name ] ) and (int) $_POST[ $option_name ] > 0 ) {
+		if ( isset( $_POST[ $option_name ] ) && (int) $_POST[ $option_name ] > 0 ) {
 			$options[ $option_name ] = (int) $_POST[ $option_name ];
 		} else {
 			$options[ $option_name ] = $default_options[ $redirect - rows ];
 		}
 
-		// Store updated options array to database
+		// Store updated options array to database.
 		update_option( 'azrcrv-r', $options );
 
-		// Redirect the page to the configuration form that was processed
+		// Redirect the page to the configuration form that was processed.
 		wp_safe_redirect( add_query_arg( 'page', 'azrcrv-r&settings-updated', admin_url( 'admin.php' ) ) );
 		exit;
 	}
@@ -453,12 +453,12 @@ function save_options() {
  */
 function display_manage_redirects() {
 	if ( ! current_user_can( 'manage_options' ) ) {
-		wp_die( esc_html__( 'You do not have sufficient permissions to access this page.', 'redirect' ) );
+		wp_die( esc_html__( 'You do not have sufficient permissions to access this page.', 'azrcrv-r' ) );
 	}
 
 	global $wpdb;
 
-	// Retrieve plugin configuration options from database
+	// Retrieve plugin configuration options from database.
 	$options = get_option_with_defaults( 'azrcrv-r' );
 
 	echo '<div id="azrcrv-r-general" class="wrap">';
@@ -470,58 +470,58 @@ function display_manage_redirects() {
 				echo esc_html( get_admin_page_title() );
 			?>
 		</h1>
-		
+
 		<?php
 
 		if ( isset( $_GET['redirect-added'] ) ) {
 			echo '<div class="notice notice-success is-dismissible">
-					<p><strong>' . esc_html__( 'Redirect has been added.', 'redirect' ) . '</strong></p>
+					<p><strong>' . esc_html__( 'Redirect has been added.', 'azrcrv-r' ) . '</strong></p>
 				</div>';
 		} elseif ( isset( $_GET['cannot-redirect-home'] ) ) {
 			echo '<div class="notice notice-error is-dismissible">
-					<p><strong>' . esc_html__( 'Redirect cannot be added for the site home page.', 'redirect' ) . '</strong></p>
+					<p><strong>' . esc_html__( 'Redirect cannot be added for the site home page.', 'azrcrv-r' ) . '</strong></p>
 				</div>';
 		} elseif ( isset( $_GET['missing-urls'] ) ) {
 			echo '<div class="notice notice-error is-dismissible">
-					<p><strong>' . esc_html__( 'Source or destination url is empty.', 'redirect' ) . '</strong></p>
+					<p><strong>' . esc_html__( 'Source or destination url is empty.', 'azrcrv-r' ) . '</strong></p>
 				</div>';
 		} elseif ( isset( $_GET['already-exists'] ) ) {
 			echo '<div class="notice notice-error is-dismissible">
-					<p><strong>' . esc_html__( 'Redirect already exists for supplied source url.', 'redirect' ) . '</strong></p>
+					<p><strong>' . esc_html__( 'Redirect already exists for supplied source url.', 'azrcrv-r' ) . '</strong></p>
 				</div>';
 		} elseif ( isset( $_GET['invalid-type'] ) ) {
 			echo '<div class="notice notice-error is-dismissible">
-					<p><strong>' . esc_html__( 'Invalid redirect type specified.', 'redirect' ) . '</strong></p>
+					<p><strong>' . esc_html__( 'Invalid redirect type specified.', 'azrcrv-r' ) . '</strong></p>
 				</div>';
 		} elseif ( isset( $_GET['not-relative'] ) ) {
 			echo '<div class="notice notice-error is-dismissible">
-					<p><strong>' . esc_html__( 'Only relative urls can be redirected.', 'redirect' ) . '</strong></p>
+					<p><strong>' . esc_html__( 'Only relative urls can be redirected.', 'azrcrv-r' ) . '</strong></p>
 				</div>';
 		} elseif ( isset( $_GET['not-valid'] ) ) {
 			echo '<div class="notice notice-error is-dismissible">
-					<p><strong>' . esc_html__( 'Only valid pages can be set as a destination.', 'redirect' ) . '</strong></p>
+					<p><strong>' . esc_html__( 'Only valid pages can be set as a destination.', 'azrcrv-r' ) . '</strong></p>
 				</div>';
 		} elseif ( isset( $_GET['deleted'] ) ) {
 			echo '<div class="notice notice-success is-dismissible">
-					<p><strong>' . esc_html__( 'Redirect has been deleted.', 'redirect' ) . '</strong></p>
+					<p><strong>' . esc_html__( 'Redirect has been deleted.', 'azrcrv-r' ) . '</strong></p>
 				</div>';
 		} elseif ( isset( $_GET['redirect-edited'] ) ) {
 			echo '<div class="notice notice-success is-dismissible">
-					<p><strong>' . esc_html__( 'Redirect has been edited.', 'redirect' ) . '</strong></p>
+					<p><strong>' . esc_html__( 'Redirect has been edited.', 'azrcrv-r' ) . '</strong></p>
 				</div>';
 		} elseif ( isset( $_GET['delete-failed'] ) ) {
 			echo '<div class="notice notice-error is-dismissible">
-					<p><strong>' . esc_html__( 'Delete of redirect failed.', 'redirect' ) . '</strong></p>
+					<p><strong>' . esc_html__( 'Delete of redirect failed.', 'azrcrv-r' ) . '</strong></p>
 				</div>';
 		} elseif ( isset( $_GET['edit-failed'] ) ) {
 			echo '<div class="notice notice-error is-dismissible">
-					<p><strong>' . esc_html__( 'Edit of redirect failed.', 'redirect' ) . '</strong></p>
+					<p><strong>' . esc_html__( 'Edit of redirect failed.', 'azrcrv-r' ) . '</strong></p>
 				</div>';
 		}
 
 		$tablename = $wpdb->prefix . DATABASE_TABLE;
 
-		$tab_1 = '<h2>' . esc_html__( 'Add New Redirect', 'redirect' ) . '</h2>';
+		$tab_1 = '<h2>' . esc_html__( 'Add New Redirect', 'azrcrv-r' ) . '</h2>';
 
 		if ( $options['default-redirect'] == 301 ) {
 			$redirect_301 = 'selected=selected';
@@ -535,28 +535,32 @@ function display_manage_redirects() {
 		$source_url      = '';
 		$redirect_type   = '';
 		$destination_url = '';
-		if ( isset( $_GET['id'] ) ) {
-			$id = (int) $_GET['id'];
+		if ( isset( $_POST['id'] ) ) {
 
-			// "complex" placeholder used as string cannot be wrapped in single quotes
-			$sql = $wpdb->prepare( 'SELECT source_url,redirect_type,destination_url FROM %1s WHERE id = %d LIMIT 0,1', $tablename, $id );
+			if ( ! empty( $_POST ) && check_admin_referer( 'azrcrv-r-mr-edit', 'azrcrv-r-mr-edit-nonce' ) ) {
 
-			// wpdb->prepare used above
-			$row = $wpdb->get_row( $sql );
+				$id = (int) $_POST['id'];
 
-			if ( $row ) {
-				$tab_1      = '<h2>' . esc_html__( 'Edit Redirect', 'redirect' ) . '</h2>';
-				$source_url = $row->source_url;
-				if ( $row->redirect_type == 301 ) {
-					$redirect_301 = 'selected=selected';
-					$redirect_302 = '';
+				// "complex" placeholder used as string cannot be wrapped in single quotes.
+				$sql = $wpdb->prepare( 'SELECT source_url,redirect_type,destination_url FROM %1s WHERE id = %d LIMIT 0,1', $tablename, $id );
+
+				// wpdb->prepare used above.
+				$row = $wpdb->get_row( $sql );
+
+				if ( $row ) {
+					$tab_1      = '<h2>' . esc_html__( 'Edit Redirect', 'azrcrv-r' ) . '</h2>';
+					$source_url = $row->source_url;
+					if ( $row->redirect_type == 301 ) {
+						$redirect_301 = 'selected=selected';
+						$redirect_302 = '';
+					} else {
+						$redirect_301 = '';
+						$redirect_302 = 'selected=selected';
+					}
+					$destination_url = $row->destination_url;
 				} else {
-					$redirect_301 = '';
-					$redirect_302 = 'selected=selected';
+					$id = 0;
 				}
-				$destination_url = $row->destination_url;
-			} else {
-				$id = 0;
 			}
 		}
 
@@ -567,14 +571,14 @@ function display_manage_redirects() {
 						<th scope="row">
 						
 							<label for="source-url">
-								' . esc_html__( 'Source URL', 'redirect' ) . '
+								' . esc_html__( 'Source URL', 'azrcrv-r' ) . '
 							</label>
 							
 						</th>
 						
 						<td>
 						
-							<input name="source-url" type="text" id="source-url" value="' . $source_url . '" class="large-text" placeholder="' . esc_html__( 'Relative URL to redirect', 'redirect' ) . '" />
+							<input name="source-url" type="text" id="source-url" value="' . $source_url . '" class="large-text" placeholder="' . esc_html__( 'Relative URL to redirect', 'azrcrv-r' ) . '" />
 							
 						</td>
 						
@@ -583,7 +587,7 @@ function display_manage_redirects() {
 					<tr>
 						<th scope="row">
 							
-								' . esc_html__( 'Redirect Type', 'redirect' ) . '
+								' . esc_html__( 'Redirect Type', 'azrcrv-r' ) . '
 							
 						</th>
 					
@@ -603,14 +607,14 @@ function display_manage_redirects() {
 						<th scope="row">
 						
 							<label for="destination-url">
-								' . esc_html__( 'Destination URL', 'redirect' ) . '
+								' . esc_html__( 'Destination URL', 'azrcrv-r' ) . '
 							</label>
 							
 						</th>
 						
 						<td>
 						
-							<input name="destination-url" type="text" id="destination-url" value="' . $destination_url . '" class="large-text" placeholder="' . esc_html__( 'Destination URL for the redirect', 'redirect' ) . '" />
+							<input name="destination-url" type="text" id="destination-url" value="' . $destination_url . '" class="large-text" placeholder="' . esc_html__( 'Destination URL for the redirect', 'azrcrv-r' ) . '" />
 							
 						</td>
 						
@@ -629,39 +633,37 @@ function display_manage_redirects() {
 		$page_end = $redirect_rows;
 		$limit    = $page_start . ', ' . $page_end;
 
-		// "complex" placeholder used as string cannot be wrapped in single quotes
+		// "complex" placeholder used as string cannot be wrapped in single quotes.
 		$date_format = '%Y-%m-%d';
 		$sql         = $wpdb->prepare( "SELECT id,source_url,redirect_count,DATE_FORMAT(last_redirect, '%1s') AS last_redirect,status,redirect_type,destination_url FROM %2s ORDER BY source_url LIMIT %3s", $date_format, $tablename, $limit );
 
-		// echo $sql.'<p />';
-
-		// wpdb->prepare used above
+		// wpdb->prepare used above.
 		$resultset = $wpdb->get_results( $sql );
 
-		$tab_2 = '<h2>' . esc_html__( 'Current Redirects', 'redirect' ) . '</h2>
+		$tab_2 = '<h2>' . esc_html__( 'Current Redirects', 'azrcrv-r' ) . '</h2>
 		<table class="azrcrv-r">
 			<thead>
 				<tr>
 					<th>
-						' . esc_html__( 'Source URL', 'redirect' ) . '
+						' . esc_html__( 'Source URL', 'azrcrv-r' ) . '
 					</th>
 					<th>
-						' . esc_html__( 'Redirects', 'redirect' ) . '
+						' . esc_html__( 'Redirects', 'azrcrv-r' ) . '
 					</th>
 					<th>
-						' . esc_html__( 'Last Redirect', 'redirect' ) . '
+						' . esc_html__( 'Last Redirect', 'azrcrv-r' ) . '
 					</th>
 					<th>
-						' . esc_html__( 'Status', 'redirect' ) . '
+						' . esc_html__( 'Status', 'azrcrv-r' ) . '
 					</th>
 					<th>
-						' . esc_html__( 'Redirect Type', 'redirect' ) . '
+						' . esc_html__( 'Redirect Type', 'azrcrv-r' ) . '
 					</th>
 					<th>
-						' . esc_html__( 'Destination URL', 'redirect' ) . '
+						' . esc_html__( 'Destination URL', 'azrcrv-r' ) . '
 					</th>
 					<th>
-						' . esc_html__( 'Action', 'redirect' ) . '
+						' . esc_html__( 'Action', 'azrcrv-r' ) . '
 					</th>
 				<tr>
 			</thead>
@@ -670,22 +672,22 @@ function display_manage_redirects() {
 			</tbody>
 		</table>';
 
-		$tbody_blank = '<tr colspan=7><td>' . esc_html__( 'No redirects found for this page...', 'redirect' ) . '</td></tr>';
+		$tbody_blank = '<tr colspan=7><td>' . esc_html__( 'No redirects found for this page...', 'azrcrv-r' ) . '</td></tr>';
 		$tbody       = '';
 		foreach ( $resultset as $result ) {
 
 			if ( $result->status == 'enabled' ) {
-				$redirect_status = esc_html__( 'Enabled', 'redirect' );
+				$redirect_status = esc_html__( 'Enabled', 'azrcrv-r' );
 				$td_class        = 'azrcrv-r-enabled';
 			} else {
-				$redirect_status = esc_html__( 'Disabled', 'redirect' );
+				$redirect_status = esc_html__( 'Disabled', 'azrcrv-r' );
 				$td_class        = 'azrcrv-r-disabled';
 			}
 
 			if ( $result->redirect_type == '301' ) {
-				$redirect_type = sprintf( esc_html__( '%d - permanent', 'redirect' ), '301' );
+				$redirect_type = sprintf( esc_html__( '%d - permanent', 'azrcrv-r' ), '301' );
 			} else {
-				$redirect_type = sprintf( esc_html__( '%d - temporary', 'redirect' ), '302' );
+				$redirect_type = sprintf( esc_html__( '%d - temporary', 'azrcrv-r' ), '302' );
 			}
 
 			$tbody .= '<tr>
@@ -733,15 +735,15 @@ function display_manage_redirects() {
 						<input style="height: 24px; " type="image" src="' . esc_url_raw( plugin_dir_url( __FILE__ ) ) . 'assets/images/toggle.svg" id="button_action" name="button_action" title="Toggle Status" alt="Toggle Status" value="toggle" class="arcrv-r"/>
 					
 					</form>
-			</div><div style="display: inline-block; "><form method="post" action="admin-post.php">
+			</div><div style="display: inline-block; "><form method="post" action="admin.php?page=azrcrv-r-mr">
 									
-						<input type="hidden" name="action" value="azrcrv_r_manage_redirects" />
-						<input name="page_options" type="hidden" value="edit,delete" />
+						<input type="hidden" name="action" value="azrcrv_r_manage_redirects_edit" />
+						<input name="page_options" type="hidden" value="edit" />
 						<input type="hidden" name="id" value="' . esc_html( stripslashes( $result->id ) ) . '" class="short-text" />
 						' . $page_field . '
 						
 						' .
-							wp_nonce_field( 'azrcrv-r-mr', 'azrcrv-r-mr-nonce', true, false )
+							wp_nonce_field( 'azrcrv-r-mr-edit', 'azrcrv-r-mr-edit-nonce', true, false )
 						. '
 						
 						<input type="hidden" name="button_action" value="edit" class="short-text" />
@@ -751,7 +753,7 @@ function display_manage_redirects() {
 			</div><div style="display: inline-block; "><form method="post" action="admin-post.php">
 									
 						<input type="hidden" name="action" value="azrcrv_r_manage_redirects" />
-						<input name="page_options" type="hidden" value="edit,delete" />
+						<input name="page_options" type="hidden" value="delete" />
 						<input type="hidden" name="id" value="' . esc_html( stripslashes( $result->id ) ) . '" class="short-text" />
 						' . $page_field . '
 						
@@ -775,47 +777,40 @@ function display_manage_redirects() {
 
 		$tab_2 = sprintf( $tab_2, $tbody );
 
-		$id_field = '';
-		if ( isset( $_GET['id'] ) ) {
-			$id       = (int) $_GET['id'];
-			$id_field = '<input type="hidden" name="id" value="' . esc_html( stripslashes( $id ) ) . '" class="short-text" />';
-		}
-
 		?>
-		
+
 		<div id="tabs">
 			<div id="tab-panel-1" >
-				
+
 				<form method="post" action="admin-post.php">
 					<fieldset>
-								
+
 						<input type="hidden" name="action" value="azrcrv_r_add_redirect" />
 						<input name="page_options" type="hidden" value="source-url,redirect-type,destination-url" />
+						<input type="hidden" name="id" value="<?php echo esc_html( $id ); ?>" />
 						
 						<?php
-							// echo $page_field;
-							// echo $id_field;
-							// <!-- Adding security through hidden referrer field -->
+							// <!-- Adding security through hidden referrer field -->.
 							wp_nonce_field( 'azrcrv-r-ar', 'azrcrv-r-ar-nonce', true, true );
 						?>
-						
+
 						<div id="tabs">
 							<div id="tab-panel-1" >
 								<?php echo $tab_1; ?>
 							</div>
 						</div>
 					</fieldset>
-					
+
 					<?php
 					if ( $id == 0 ) {
-						$button_text = esc_html__( 'Add redirect', 'redirect' );
+						$button_text = esc_html__( 'Add redirect', 'azrcrv-r' );
 					} else {
-						$button_text = esc_html__( 'Edit redirect', 'redirect' );
+						$button_text = esc_html__( 'Edit redirect', 'azrcrv-r' );
 					}
 					?>
 					<input type="submit" name="btn_add" value="<?php echo $button_text; ?>" class="button-primary"/>
 				</form>
-				
+
 			</div>
 			<div id="tab-panel-2" >
 				<?php
@@ -824,7 +819,7 @@ function display_manage_redirects() {
 				?>
 			</div>
 		</div>
-		
+
 	</div>
 	<?php
 
@@ -836,12 +831,12 @@ function display_manage_redirects() {
  * @since 1.0.0
  */
 function manage_redirects() {
-	// Check that user has proper security level
+	// Check that user has proper security level.
 	if ( ! current_user_can( 'manage_options' ) ) {
-		wp_die( esc_html__( 'You do not have permissions to perform this action', 'redirect' ) );
+		wp_die( esc_html__( 'You do not have permissions to perform this action', 'azrcrv-r' ) );
 	}
 
-	// Check that nonce field created in configuration form is present
+	// Check that nonce field created in configuration form is present.
 	if ( ! empty( $_POST ) && check_admin_referer( 'azrcrv-r-mr', 'azrcrv-r-mr-nonce' ) ) {
 
 		global $wpdb;
@@ -850,7 +845,7 @@ function manage_redirects() {
 
 		if ( isset( $_POST['button_action'] ) ) {
 
-			// Retrieve original plugin options array
+			// Retrieve original plugin options array.
 			$options = get_option( 'azrcrv-r' );
 
 			$page = '';
@@ -858,7 +853,7 @@ function manage_redirects() {
 				$page = '&p=' . sanitize_text_field( wp_unslash( $_POST['p'] ) );
 			}
 
-			if ( isset( $_POST['id'] ) and (int) $_POST['id'] > 0 ) {
+			if ( isset( $_POST['id'] ) && (int) $_POST['id'] > 0 ) {
 				$id = (int) $_POST['id'];
 
 				if ( $_POST['button_action'] == 'delete' ) {
@@ -867,16 +862,16 @@ function manage_redirects() {
 
 					wp_safe_redirect( add_query_arg( 'page', 'azrcrv-r-mr&deleted' . esc_html( $page ), admin_url( 'admin.php' ) ) );
 
-				} elseif ( $_POST['button_action'] == 'edit' ) {
+				/*} elseif ( $_POST['button_action'] == 'edit' ) {
 
-					wp_safe_redirect( add_query_arg( 'page', 'azrcrv-r-mr&edit&id=' . $id . esc_html( $page ), admin_url( 'admin.php' ) ) );
+					wp_safe_redirect( add_query_arg( 'page', 'azrcrv-r-mr&edit&id=' . $id . esc_html( $page ), admin_url( 'admin.php' ) ) );*/
 
 				} else {
 
-					// "complex" placeholder used as string cannot be wrapped in single quotes
+					// "complex" placeholder used as string cannot be wrapped in single quotes.
 					$sql = "UPDATE %1s SET status = CASE WHEN status = 'enabled' THEN 'disabled' ELSE 'enabled' END WHERE id = %d";
 
-					// string with palceholders created above
+					// string with palceholders created above.
 					$wpdb->query( $wpdb->prepare( $sql, $tablename, esc_attr( $id ) ) );
 
 					wp_safe_redirect( add_query_arg( 'page', 'azrcrv-r-mr&refresh' . esc_html( $page ), admin_url( 'admin.php' ) ) );
@@ -893,7 +888,7 @@ function manage_redirects() {
  *
  * @since 1.0.0
  */
-function get_pagination( $rowsperpage ) {
+function get_pagination( $rows_per_page ) {
 
 	$pagination = '';
 
@@ -901,68 +896,67 @@ function get_pagination( $rowsperpage ) {
 
 	$tablename = $wpdb->prefix . DATABASE_TABLE;
 
-	$range = 5;// how many pages to show in page link
+	$range = 5;// how many pages to show in page link.
 
 	if ( isset( $_GET['p'] ) && is_numeric( $_GET['p'] ) ) {
-		// cast var as int
+		// cast var as int.
 		$currentpage = (int) $_GET['p'];
 	} else {
-		// default page num
+		// default page num.
 		$currentpage = 1;
 	}
 
-	// "complex" placeholder used as string cannot be wrapped in single quotes
+	// "complex" placeholder used as string cannot be wrapped in single quotes.
 	$sql = $wpdb->prepare( 'SELECT COUNT(*) FROM %1s', $tablename );
 
-	// echo $sql.'<p />';
-	// wpdb->prepare used above
+	// wpdb->prepare used above.
 	$numrows = $wpdb->get_var( $sql );
 
-	$totalpages = ceil( $numrows / $rowsperpage );
+	$totalpages = ceil( $numrows / $rows_per_page );
 
 	if ( $currentpage > $totalpages ) {
-		// set current page to last page
+		// set current page to last page.
 		$currentpage = $totalpages;
 	}
 	// if current page is less than first page...
 	if ( $currentpage < 1 ) {
-		// set current page to first page
+		// set current page to first page.
 		$currentpage = 1;
 	}
 
 	if ( $currentpage > 1 ) {
-		// show << link to go back to page 1
+		// show << link to go back to page 1.
 		$pagination .= " <a href='admin.php?page=azrcrv-r-mr&p=1'>&laquo;</a> ";
-		// get previous page num
+		// get previous page num.
 		$prevpage = $currentpage - 1;
-		// show < link to go back to 1 page
+		// show < link to go back to 1 page.
 		$pagination .= " <a href='admin.php?page=azrcrv-r-mr&p=$prevpage'>&lsaquo;</a> ";
 	}
 
-	// loop to show links to range of pages around current page
+	// loop to show links to range of pages around current page.
 	for ( $x = ( $currentpage - $range ); $x < ( ( $currentpage + $range ) + 1 ); $x++ ) {
 		// if it's a valid page number...
 		if ( ( $x > 0 ) && ( $x <= $totalpages ) ) {
 			// if we're on current page...
 			if ( $x == $currentpage ) {
-				// 'highlight' it but don't make a link
+				// 'highlight' it but don't make a link.
 				$pagination .= " [<b>$x</b>] ";
 				// if not current page...
 			} else {
-				// make it a link
+				// make it a link.
 				$pagination .= " <a href='admin.php?page=azrcrv-r-mr&p=$x'>$x</a> ";
 			}
 		}
 	}
 
-	// if not on last page, show forward and last page links
+	// if not on last page, show forward and last page links.
 	if ( $currentpage != $totalpages ) {
-		// get next page
+		// get next page.
 		$nextpage = esc_html( $currentpage + 1 );
-		// echo forward link for next page
+		// echo forward link for next page.
 
 		$pagination .= " <a href='admin.php?page=azrcrv-r-mr&p=$nextpage'>&rsaquo;</a> ";
-		// echo forward link for lastpage
+		// echo forward link for lastpage.
 		$pagination .= " <a href='admin.php?page=azrcrv-r-mr&p=$totalpages'>&raquo;</a> ";
 	}
 
@@ -976,19 +970,19 @@ function get_pagination( $rowsperpage ) {
  * @since 1.0.0
  */
 function add_redirect() {
-	// Check that user has proper security level
+	// Check that user has proper security level.
 	if ( ! current_user_can( 'manage_options' ) ) {
-		wp_die( esc_html__( 'You do not have permissions to perform this action', 'redirect' ) );
+		wp_die( esc_html__( 'You do not have permissions to perform this action', 'azrcrv-r' ) );
 	}
 
-	// Check that nonce field created in configuration form is present
+	// Check that nonce field created in configuration form is present.
 	if ( ! empty( $_POST ) && check_admin_referer( 'azrcrv-r-ar', 'azrcrv-r-ar-nonce' ) ) {
 
 		global $wpdb;
 
 		if ( isset( $_POST['btn_add'] ) ) {
 
-			// Retrieve original plugin options array
+			// Retrieve original plugin options array.
 			$options = get_option( 'azrcrv-r' );
 
 			$page = '';
@@ -996,7 +990,10 @@ function add_redirect() {
 				$page = '&p=' . sanitize_text_field( wp_unslash( $_POST['p'] ) );
 			}
 
-			$id = (int) $_POST['id'];
+			$id = 0;
+			if ( isset( $_POST['id'] ) ) {
+				$id = (int) $_POST['id'];
+			}
 
 			if ( isset( $_POST['source-url'] ) ) {
 				$before = trailingslashit( wp_parse_url( sanitize_text_field( wp_unslash( $_POST['source-url'] ) ), PHP_URL_PATH ) );
@@ -1018,29 +1015,29 @@ function add_redirect() {
 				$redirect = check_for_redirect( $before );
 			}
 
-			if ( $redirect and $id == 0 ) {
+			if ( $redirect && $id == 0 ) {
 				$message = 'already-exists';
 			} elseif ( $before == '/' ) { // is homepage?
 				$message = 'cannot-redirect-home';
-			} elseif ( $before == '' or $after == '' ) { // both source and destination url required
+			} elseif ( $before == '' || $after == '' ) { // both source and destination url required.
 				$message = 'missing-urls';
-			} elseif ( $redirect_type != '301' and $redirect_type != '302' ) { // invalid redirect type
+			} elseif ( $redirect_type != '301' && $redirect_type != '302' ) { // invalid redirect type.
 				$message = 'invalid-type';
-			} elseif ( wp_make_link_relative( $before ) <> $before ) { // before must be relative
+			} elseif ( wp_make_link_relative( $before ) <> $before ) { // before must be relative.
 				$message = 'not-relative';
 			} else {
-				// insert new redirect
+				// insert new redirect.
 				$tablename = $wpdb->prefix . DATABASE_TABLE;
 
 				if ( $id == 0 ) {
-					// "complex" placeholder used as string cannot be wrapped in single quotes
+					// "complex" placeholder used as string cannot be wrapped in single quotes.
 					$sql = $wpdb->prepare( "INSERT INTO %1s (source_url,status,redirect_type,destination_url, added, added_utc) VALUES (%s, 'enabled', %d, %s, Now(), UTC_TIMESTAMP())", $tablename, $before, $redirect_type, $after );
 				} else {
-					// "complex" placeholder used as string cannot be wrapped in single quotes
+					// "complex" placeholder used as string cannot be wrapped in single quotes.
 					$sql = $wpdb->prepare( 'UPDATE %1s SET source_url = %s, redirect_type = %d, destination_url = %s WHERE id = %d', $tablename, $before, $redirect_type, $after, $id );
 				}
 
-				// wpdb->prepare used above
+				// wpdb->prepare used above.
 				$wpdb->query( $sql );
 
 				if ( $id == 0 ) {
@@ -1066,7 +1063,7 @@ function redirect_incoming() {
 
 	$options = get_option_with_defaults( 'azrcrv-r' );
 
-	$url = trailingslashit( esc_url_raw( strtok( wp_unslash( $_SERVER['REQUEST_URI'] ), '?' ) ) );
+	$url = trailingslashit( strtok( esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ), '?' ) );
 
 	$query_string = sanitize_text_field( wp_unslash( $_SERVER['QUERY_STRING'] ) );
 
@@ -1076,7 +1073,7 @@ function redirect_incoming() {
 		if ( $redirect->status == 'enabled' ) {
 
 			$tablename = $wpdb->prefix . DATABASE_TABLE;
-			// "complex" placeholder used as string cannot be wrapped in single quotes
+			// "complex" placeholder used as string cannot be wrapped in single quotes.
 			$sql = $wpdb->prepare( 'UPDATE %1s SET redirect_count = redirect_count + 1, last_redirect = NOW(), last_redirect_utc = UTC_TIMESTAMP() WHERE ID = %d', $tablename, $redirect->id );
 
 			// wpdb->prepare used above
@@ -1086,7 +1083,7 @@ function redirect_incoming() {
 				$query_string = '?' . esc_html( $query_string );
 			}
 
-			// redirects may not be internal; future version will allow extra hosts for wp_safe_redirect
+			// redirects may not be internal; future version will allow extra hosts for wp_safe_redirect.
 			wp_redirect( $redirect->destination_url . $query_string, $redirect->redirect_type );
 			exit;
 
@@ -1106,10 +1103,10 @@ function check_for_redirect( $url ) {
 
 	$tablename = $wpdb->prefix . DATABASE_TABLE;
 
-	// "complex" placeholder used as string cannot be wrapped in single quotes
+	// "complex" placeholder used as string cannot be wrapped in single quotes.
 	$sql = $wpdb->prepare( 'SELECT id,destination_url,redirect_type,status FROM %1s WHERE source_url = %s LIMIT 0,1', $tablename, esc_url_raw( $url ) );
 
-	// wpdb->prepare used above
+	// wpdb->prepare used above.
 	$redirect = $wpdb->get_row( $sql );
 
 	return $redirect;
@@ -1146,7 +1143,7 @@ function add_redirect_for_changed_permalink( $post_id, $post_after, $post_before
 		$before = trailingslashit( wp_parse_url( get_transient( 'azrcrv-r-' . $post_id ), PHP_URL_PATH ) );
 		$after  = trailingslashit( wp_parse_url( get_permalink( $post_id ), PHP_URL_PATH ) );
 
-		if ( $before != $after and $before != '/' ) {
+		if ( $before != $after && $before != '/' ) {
 
 			$tablename = $wpdb->prefix . DATABASE_TABLE;
 
@@ -1154,19 +1151,19 @@ function add_redirect_for_changed_permalink( $post_id, $post_after, $post_before
 
 			if ( $redirect ) {
 
-				// insert new redirect
-				// "complex" placeholder used as string cannot be wrapped in single quotes
+				// insert new redirect.
+				// "complex" placeholder used as string cannot be wrapped in single quotes.
 				$sql = $wpdb->prepare( 'UPDATE %1s SET destination_url = %s WHERE id = %d', $tablename, $after, $redirect->id );
 
 			} else {
 
-				// insert new redirect
-				// "complex" placeholder used as string cannot be wrapped in single quotes
+				// insert new redirect.
+				// "complex" placeholder used as string cannot be wrapped in single quotes.
 				$sql = $wpdb->prepare( "INSERT INTO %1s (source_url,status,redirect_type,destination_url, added, added_utc) VALUES (%s, 'enabled', %d, %s, Now(), UTC_TIMESTAMP())", $tablename, $before, esc_attr( $options['default-redirect'] ), $after );
 
 			}
 
-			// wpdb->prepare used above
+			// wpdb->prepare used above.
 			$wpdb->query( $sql );
 
 		}
