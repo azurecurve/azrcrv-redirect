@@ -187,12 +187,17 @@ class UpdateClient {
 
 		// Only need this JS/CSS on the plugin admin page and updates page.
 		if ($screen->base === 'plugins' || $screen->base === 'plugin-install') {
-			// This will make the jQuery below work with various languages.
-			$text1 = esc_html__('Compatible up to:');
-			$text2 = esc_html__('Reviews');
-			$text3 = esc_html__('Read all reviews');
+			// These strings are taken directly from ClassicPress core, so they
+			// should receive the core translations to make the jQuery below
+			// work with various languages.
+			// phpcs:ignore WordPress.WP.I18n.MissingArgDomain
+			$text1 = __('Compatible up to:');
+			// phpcs:ignore WordPress.WP.I18n.MissingArgDomain
+			$text2 = __('Reviews');
+			// phpcs:ignore WordPress.WP.I18n.MissingArgDomain
+			$text3 = __('Read all reviews');
 			// Swap "Compatible up to: 4.9.99" with "Compatible up to: 1.1.1".
-			echo '<script>jQuery(document).ready(function($){$("ul li:contains(4.9.99)").html("<strong>'.$text1.'</strong> '.$this->cp_latest_version.'");$(".fyi h3:contains('.$text2.')").hide();$(".fyi p:contains('.$text3.')").hide();});</script>'."\n";
+			echo '<script>jQuery(document).ready(function($){$("ul li:contains(4.9.99)").html("<strong>'.esc_html($text1).'</strong> '.esc_html($this->cp_latest_version).'");$(".fyi h3:contains('.esc_html($text2).')").hide();$(".fyi p:contains('.esc_html($text3).')").hide();});</script>'."\n";
 			// Styles for the modal window.
 			echo '<style>'."\n";
 			// Hide the ratings text and links to WP.org reviews.
@@ -380,6 +385,8 @@ class UpdateClient {
 		// Add the link to the plugin's or theme's row, if not already existing.
 		if ($this->identifier === $component_file) {
 			$anchors_string = implode('', $component_meta);
+			// Core string used to take advantage of core translations.
+			// phpcs:ignore WordPress.WP.I18n.MissingArgDomain
 			$anchor_text = esc_html__('View details');
 			if (!preg_match('|(\<a[ \s\S\d]*)('.$anchor_text.')(<\/a>)|', $anchors_string)) {
 				$component_meta[] = '<a class="thickbox" href="'.admin_url('/'.$this->config['type'].'-install.php?tab='.$this->config['type'].'-information&'.$this->config['type'].'='.$this->server_slug.'&TB_iframe=true&width=600&height=550').'">'.$anchor_text.'</a>';
@@ -444,13 +451,19 @@ class UpdateClient {
 		// Set destination name.
 		$result['destination_name'] = dirname($hook_extra[$this->config['type']]);
 
+		// Note, this method is only called from the 'upgrader_post_install'
+		// filter so the $_GET parameters are safe (no user input).
+
 		// Updating a plugin or theme?
 		if ($hook_suffix === 'update') {
 			// Got both of the needed arguments?
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			if (isset($_GET['action'], $_GET[$this->config['type']])) {
 				// First argument is good?
+				// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 				if ($_GET['action'] === 'upgrade-'.$this->config['type']) {
 					// Next argument is good?
+					// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 					if ($_GET[$this->config['type']] === $hook_extra[$this->config['type']]) {
 						// Activate the component.
 						$function = ($this->config['type'] === 'plugin') ? 'activate_plugin' : 'activate_theme';

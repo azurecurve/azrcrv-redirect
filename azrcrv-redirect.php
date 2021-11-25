@@ -118,6 +118,7 @@ function register_admin_styles() {
  * @since 1.0.0
  */
 function enqueue_admin_styles() {
+	// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	if ( isset( $_GET['page'] ) && ( $_GET['page'] == 'azrcrv-r' || $_GET['page'] == 'azrcrv-r-mr' ) ) {
 		wp_enqueue_style( 'azrcrv-r-admin-styles' );
 	}
@@ -299,6 +300,7 @@ function display_options() {
 		</h1>
 		<?php
 
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( isset( $_GET['settings-updated'] ) ) {
 			echo '<div class="notice notice-success is-dismissible">
 					<p><strong>' . esc_html__( 'Settings have been saved.', 'azrcrv-r' ) . '</strong></p>
@@ -385,7 +387,10 @@ function display_options() {
 
 				<div id="tabs">
 					<div id="tab-panel-1" >
-						<?php echo $tab_1; ?>
+						<?php
+						// String prepared above is safe.
+						// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+						echo $tab_1; ?>
 					</div>
 				</div>
 			</fieldset>
@@ -541,10 +546,13 @@ function display_manage_redirects() {
 
 				$id = (int) $_POST['id'];
 
-				// "complex" placeholder used as string cannot be wrapped in single quotes.
+				// "complex" placeholder used intentionally so that table name
+				// is not wrapped in single quotes.
+				// phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnquotedComplexPlaceholder
 				$sql = $wpdb->prepare( 'SELECT source_url,redirect_type,destination_url FROM %1s WHERE id = %d LIMIT 0,1', $tablename, $id );
 
-				// wpdb->prepare used above.
+				// $wpdb->prepare used above.
+				// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 				$row = $wpdb->get_row( $sql );
 
 				if ( $row ) {
@@ -633,11 +641,14 @@ function display_manage_redirects() {
 		$page_end = $redirect_rows;
 		$limit    = $page_start . ', ' . $page_end;
 
-		// "complex" placeholder used as string cannot be wrapped in single quotes.
 		$date_format = '%Y-%m-%d';
+		// "complex" placeholders used intentionally so that date format and
+		// table name are not wrapped in single quotes.
+		// phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnquotedComplexPlaceholder
 		$sql         = $wpdb->prepare( "SELECT id,source_url,redirect_count,DATE_FORMAT(last_redirect, '%1s') AS last_redirect,status,redirect_type,destination_url FROM %2s ORDER BY source_url LIMIT %3s", $date_format, $tablename, $limit );
 
 		// wpdb->prepare used above.
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		$resultset = $wpdb->get_results( $sql );
 
 		$tab_2 = '<h2>' . esc_html__( 'Current Redirects', 'azrcrv-r' ) . '</h2>
@@ -796,7 +807,10 @@ function display_manage_redirects() {
 
 						<div id="tabs">
 							<div id="tab-panel-1" >
-								<?php echo $tab_1; ?>
+								<?php
+								// String prepared above is safe.
+								// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+								echo $tab_1; ?>
 							</div>
 						</div>
 					</fieldset>
@@ -807,14 +821,19 @@ function display_manage_redirects() {
 					} else {
 						$button_text = esc_html__( 'Edit redirect', 'azrcrv-r' );
 					}
-					?>
+					// String prepared above is safe.
+					// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 					<input type="submit" name="btn_add" value="<?php echo $button_text; ?>" class="button-primary"/>
 				</form>
 
 			</div>
 			<div id="tab-panel-2" >
 				<?php
+					// String prepared above is safe.
+					// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 					echo $tab_2;
+					// get_pagination() is safe.
+					// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 					echo '<div class=azrcrv-r-pagination>' . get_pagination( $redirect_rows ) . '</div>';
 				?>
 			</div>
@@ -868,10 +887,12 @@ function manage_redirects() {
 
 				} else {
 
-					// "complex" placeholder used as string cannot be wrapped in single quotes.
 					$sql = "UPDATE %1s SET status = CASE WHEN status = 'enabled' THEN 'disabled' ELSE 'enabled' END WHERE id = %d";
 
-					// string with palceholders created above.
+					// String with palceholders created above. Note, "complex"
+					// placeholder used intentionally so that table name is not
+					// wrapped in single quotes.
+					// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 					$wpdb->query( $wpdb->prepare( $sql, $tablename, esc_attr( $id ) ) );
 
 					wp_safe_redirect( add_query_arg( 'page', 'azrcrv-r-mr&refresh' . esc_html( $page ), admin_url( 'admin.php' ) ) );
@@ -898,18 +919,26 @@ function get_pagination( $rows_per_page ) {
 
 	$range = 5;// how many pages to show in page link.
 
+	// Usage of $_GET['p'] is safe. It is forced to a number and this function
+	// is only called after a 'manage_options' capability check (see function
+	// display_manage_redirects()).
+	// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	if ( isset( $_GET['p'] ) && is_numeric( $_GET['p'] ) ) {
 		// cast var as int.
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$currentpage = (int) $_GET['p'];
 	} else {
 		// default page num.
 		$currentpage = 1;
 	}
 
-	// "complex" placeholder used as string cannot be wrapped in single quotes.
+	// "complex" placeholder used intentionally so that table name is not
+	// wrapped in single quotes.
+	// phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnquotedComplexPlaceholder
 	$sql = $wpdb->prepare( 'SELECT COUNT(*) FROM %1s', $tablename );
 
 	// wpdb->prepare used above.
+	// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 	$numrows = $wpdb->get_var( $sql );
 
 	$totalpages = ceil( $numrows / $rows_per_page );
@@ -1030,14 +1059,19 @@ function add_redirect() {
 				$tablename = $wpdb->prefix . DATABASE_TABLE;
 
 				if ( $id == 0 ) {
-					// "complex" placeholder used as string cannot be wrapped in single quotes.
+					// "complex" placeholder used intentionally so that table
+					// name is not wrapped in single quotes.
+					// phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnquotedComplexPlaceholder
 					$sql = $wpdb->prepare( "INSERT INTO %1s (source_url,status,redirect_type,destination_url, added, added_utc) VALUES (%s, 'enabled', %d, %s, Now(), UTC_TIMESTAMP())", $tablename, $before, $redirect_type, $after );
 				} else {
-					// "complex" placeholder used as string cannot be wrapped in single quotes.
+					// "complex" placeholder used intentionally so that table
+					// name is not wrapped in single quotes.
+					// phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnquotedComplexPlaceholder
 					$sql = $wpdb->prepare( 'UPDATE %1s SET source_url = %s, redirect_type = %d, destination_url = %s WHERE id = %d', $tablename, $before, $redirect_type, $after, $id );
 				}
 
 				// wpdb->prepare used above.
+				// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 				$wpdb->query( $sql );
 
 				if ( $id == 0 ) {
@@ -1073,10 +1107,13 @@ function redirect_incoming() {
 		if ( $redirect->status == 'enabled' ) {
 
 			$tablename = $wpdb->prefix . DATABASE_TABLE;
-			// "complex" placeholder used as string cannot be wrapped in single quotes.
+			// "complex" placeholder used intentionally so that table name is
+			// not wrapped in single quotes.
+			// phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnquotedComplexPlaceholder
 			$sql = $wpdb->prepare( 'UPDATE %1s SET redirect_count = redirect_count + 1, last_redirect = NOW(), last_redirect_utc = UTC_TIMESTAMP() WHERE ID = %d', $tablename, $redirect->id );
 
-			// wpdb->prepare used above
+			// $wpdb->prepare used above.
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			$wpdb->query( $sql );
 
 			if ( strlen( $query_string ) > 0 ) {
@@ -1084,6 +1121,7 @@ function redirect_incoming() {
 			}
 
 			// redirects may not be internal; future version will allow extra hosts for wp_safe_redirect.
+			// phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect
 			wp_redirect( $redirect->destination_url . $query_string, $redirect->redirect_type );
 			exit;
 
@@ -1103,10 +1141,13 @@ function check_for_redirect( $url ) {
 
 	$tablename = $wpdb->prefix . DATABASE_TABLE;
 
-	// "complex" placeholder used as string cannot be wrapped in single quotes.
+	// "complex" placeholder used intentionally so that table name is not
+	// wrapped in single quotes.
+	// phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnquotedComplexPlaceholder
 	$sql = $wpdb->prepare( 'SELECT id,destination_url,redirect_type,status FROM %1s WHERE source_url = %s LIMIT 0,1', $tablename, esc_url_raw( $url ) );
 
 	// wpdb->prepare used above.
+	// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 	$redirect = $wpdb->get_row( $sql );
 
 	return $redirect;
@@ -1152,18 +1193,23 @@ function add_redirect_for_changed_permalink( $post_id, $post_after, $post_before
 			if ( $redirect ) {
 
 				// insert new redirect.
-				// "complex" placeholder used as string cannot be wrapped in single quotes.
+				// "complex" placeholder used intentionally so that table name
+				// is not wrapped in single quotes.
+				// phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnquotedComplexPlaceholder
 				$sql = $wpdb->prepare( 'UPDATE %1s SET destination_url = %s WHERE id = %d', $tablename, $after, $redirect->id );
 
 			} else {
 
 				// insert new redirect.
-				// "complex" placeholder used as string cannot be wrapped in single quotes.
+				// "complex" placeholder used intentionally so that table name
+				// is not wrapped in single quotes.
+				// phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnquotedComplexPlaceholder
 				$sql = $wpdb->prepare( "INSERT INTO %1s (source_url,status,redirect_type,destination_url, added, added_utc) VALUES (%s, 'enabled', %d, %s, Now(), UTC_TIMESTAMP())", $tablename, $before, esc_attr( $options['default-redirect'] ), $after );
 
 			}
 
 			// wpdb->prepare used above.
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			$wpdb->query( $sql );
 
 		}
