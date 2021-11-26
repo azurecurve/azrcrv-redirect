@@ -209,6 +209,13 @@ if ( ! function_exists( 'azrcrv_populate_plugin_menu_r' ) ) {
 				'retired'     => 0,
 				'updated'     => '2020-04-04',
 			),
+			'Contact Forms'              => array(
+				'plugin_link' => 'azrcrv-contact-forms/azrcrv-contact-forms.php',
+				'admin_URL'   => 'admin.php?page=azrcrv-cf',
+				'dev_URL'     => 'https://development.azurecurve.co.uk/classicpress-plugins/contact-forms/',
+				'retired'     => 0,
+				'updated'     => '2021-12-01',
+			),
 			'Display After Post Content' => array(
 				'plugin_link' => 'azrcrv-display-after-post-content/azrcrv-display-after-post-content.php',
 				'admin_URL'   => 'admin.php?page=azrcrv-dapc',
