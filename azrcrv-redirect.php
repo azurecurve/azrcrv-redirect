@@ -635,7 +635,7 @@ function display_manage_redirects() {
 		$date_format = '%Y-%m-%d';
 		// "complex" placeholders used intentionally so that date format is
 		// not wrapped in single quotes.
-		$resultset = $wpdb->get_results( $wpdb->prepare( "SELECT id,source_url,redirect_count,DATE_FORMAT(last_redirect, '%1$s') AS last_redirect,status,redirect_type,destination_url FROM {$wpdb->prefix}azrcrv_redirects ORDER BY source_url LIMIT %2$s", $date_format, $limit ) );
+		$resultset = $wpdb->get_results( $wpdb->prepare( 'SELECT id,source_url,redirect_count,DATE_FORMAT(last_redirect, \'%1$s\') AS last_redirect,status,redirect_type,destination_url FROM %2$s ORDER BY source_url LIMIT %3$s', $date_format, $wpdb->prefix . 'azrcrv_redirects', $limit ) );
 
 		$tab_2 = '<h2>' . esc_html__( 'Current Redirects', 'azrcrv-r' ) . '</h2>
 		<table class="azrcrv-r">
