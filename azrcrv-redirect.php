@@ -3,7 +3,7 @@
  * ------------------------------------------------------------------------------
  * Plugin Name: Redirect
  * Description: Redirect URIs with a 301 (permanent) or 302 (temporary) redirect.
- * Version: 1.0.6
+ * Version: 1.0.8
  * Author: azurecurve
  * Author URI: https://development.azurecurve.co.uk/classicpress-plugins/
  * Plugin URI: https://development.azurecurve.co.uk/classicpress-plugins/redirect/
@@ -848,8 +848,6 @@ function manage_redirects() {
 
 		global $wpdb;
 
-		$tablename = $wpdb->prefix . DATABASE_TABLE;
-
 		if ( isset( $_POST['button_action'] ) ) {
 
 			// Retrieve original plugin options array.
@@ -865,7 +863,7 @@ function manage_redirects() {
 
 				if ( $_POST['button_action'] == 'delete' ) {
 
-					$wpdb->delete( $tablename, array( 'id' => esc_attr( $id ) ) );
+					$wpdb->delete( $wpdb->prefix . 'azrcrv_redirects', array( 'id' => esc_attr( $id ) ) );
 
 					wp_safe_redirect( add_query_arg( 'page', 'azrcrv-r-mr&deleted' . esc_html( $page ), admin_url( 'admin.php' ) ) );
 
