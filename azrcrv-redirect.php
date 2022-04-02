@@ -3,7 +3,7 @@
  * ------------------------------------------------------------------------------
  * Plugin Name: Redirect
  * Description: Redirect URIs with a 301 (permanent) or 302 (temporary) redirect.
- * Version: 1.0.8
+ * Version: 1.0.9
  * Author: azurecurve
  * Author URI: https://development.azurecurve.co.uk/classicpress-plugins/
  * Plugin URI: https://development.azurecurve.co.uk/classicpress-plugins/redirect/
@@ -1002,7 +1002,8 @@ function add_redirect() {
 				$redirect_type = 0;
 			}
 			if ( isset( $_POST['destination-url'] ) ) {
-				$after = trailingslashit( wp_parse_url( sanitize_text_field( wp_unslash( $_POST['destination-url'] ) ), PHP_URL_PATH ) );
+				//$after = trailingslashit( wp_parse_url( sanitize_text_field( wp_unslash( $_POST['destination-url'] ) ), PHP_URL_PATH ) );
+				$after = trailingslashit( sanitize_text_field( wp_unslash( $_POST['destination-url'] ), PHP_URL_PATH ) );
 			} else {
 				$after = '';
 			}
