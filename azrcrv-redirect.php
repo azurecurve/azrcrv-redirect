@@ -3,7 +3,7 @@
  * ------------------------------------------------------------------------------
  * Plugin Name: Redirect
  * Description: Redirect URIs with a 301 (permanent) or 302 (temporary) redirect.
- * Version: 1.0.10
+ * Version: 1.0.11
  * Author: azurecurve
  * Author URI: https://development.azurecurve.co.uk/classicpress-plugins/
  * Plugin URI: https://development.azurecurve.co.uk/classicpress-plugins/redirect/
@@ -687,30 +687,6 @@ function display_manage_redirects() {
 				$redirect_type = sprintf( esc_html__( '%d - temporary', 'azrcrv-r' ), '302' );
 			}
 
-			$tbody .= '<tr>
-					<td>
-						<a href="' . esc_attr( $result->source_url ) . '">' . esc_html( $result->source_url ) . '</a>
-					</td>
-					<td>
-						' . esc_html( $result->redirect_count ) . '
-					</td>
-					<td>
-						' . esc_html( $result->last_redirect ) . '
-					</td>
-					<td class="' . $td_class . '">
-						' . esc_html( $redirect_status ) . '
-					</td>
-					<td>
-						' . esc_html( $redirect_type ) . '
-					</td>
-					<td>
-						<a href="' . esc_attr( $result->destination_url ) . '">' . esc_html( $result->destination_url ) . '</a>
-					</td>
-					<td>
-						%s
-					</td>
-				</tr>';
-
 			$page_field = '';
 			if ( isset( $_GET['p'] ) ) {
 				$page_number = (int) $_GET['p'];
@@ -764,7 +740,31 @@ function display_manage_redirects() {
 					</form>
 			</div>';
 
-			$tbody = sprintf( $tbody, $buttons );
+			$tbody .= '<tr>
+					<td>
+						<a href="' . esc_attr( $result->source_url ) . '">' . esc_html( $result->source_url ) . '</a>
+					</td>
+					<td>
+						' . esc_html( $result->redirect_count ) . '
+					</td>
+					<td>
+						' . esc_html( $result->last_redirect ) . '
+					</td>
+					<td class="' . $td_class . '">
+						' . esc_html( $redirect_status ) . '
+					</td>
+					<td>
+						' . esc_html( $redirect_type ) . '
+					</td>
+					<td>
+						<a href="' . esc_attr( $redirect_type ) . '">' . esc_html( $result->destination_url ) . '</a>
+					</td>
+					<td>
+						' . $buttons . '
+					</td>
+				</tr>';
+
+			//$tbody = sprintf( $tbody, $buttons );
 
 		}
 
@@ -1003,7 +1003,7 @@ function add_redirect() {
 			}
 			if ( isset( $_POST['destination-url'] ) ) {
 				//$after = trailingslashit( wp_parse_url( sanitize_text_field( wp_unslash( $_POST['destination-url'] ) ), PHP_URL_PATH ) );
-				$after = trailingslashit( sanitize_text_field( wp_unslash( $_POST['destination-url'] ), PHP_URL_PATH ) );
+				$after = trailingslashit( sanitize_url( wp_unslash( $_POST['destination-url'] ), PHP_URL_PATH ) );
 			} else {
 				$after = '';
 			}
